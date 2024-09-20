@@ -30,7 +30,7 @@ def insert_text(context):
     )
 
 # Сохранение изменений в новый PDF-файл
-    pdf_document.save(context['file_output'], incremental=context['incremental'], encryption=0)
+    pdf_document.save(context['output_path'], incremental=context['incremental'], encryption=0)
     pdf_document.close()
 
 
@@ -42,7 +42,7 @@ context = {
     'text': '5643',
     'color': (184 / 255, 1, 0),
     'coordinates': (390, 360),
-    'file_output': 'output.pdf',
+    'output_path': 'output.pdf',
     'incremental': False
     }
 
@@ -56,7 +56,7 @@ context = {
     'text': '10746',
     'color': (0, 0, 0),
     'coordinates': (420, 520),
-    'file_output': 'output.pdf',
+    'output_path': 'output.pdf',
     'incremental': True
     }
 
