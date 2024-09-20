@@ -1,37 +1,5 @@
-import fitz  # pymupdf
-
-
-def insert_text(context):
-
-# Открытие существующего PDF-файла
-    pdf_document = fitz.open(context['file_name'])
-
-# Выбор страницы, на которой нужно работать
-    page = pdf_document.load_page(context['page_num'])  # Первая страница (индекс 0)
-
-# Путь к кастомному шрифту
-    font_path = context['font_path']
-
-# Вставка кастомного шрифта на страницу
-    fontname = 'CustomFont'
-    page.insert_font(fontfile=font_path, fontname=fontname)
-
-# Настройка шрифта и текста
-    text = context['text']
-    text_position = context['coordinates']   # Позиция (x, y) для текста
-
-# Добавление текста на страницу с использованием кастомного шрифта
-    page.insert_text(
-        text_position,              # Позиция текста
-        text,                       # Содержимое текста
-        fontsize=context['font_size'],                # Размер шрифта
-        fontname=fontname,          # Имя кастомного шрифта
-        color=context['color']             # Цвет текста (в диапазоне от 0 до 1)
-    )
-
-# Сохранение изменений в новый PDF-файл
-    pdf_document.save(context['output_path'], incremental=context['incremental'], encryption=0)
-    pdf_document.close()
+from insert_text import insert_text
+from insert_image import insert_image
 
 
 context = {
@@ -103,3 +71,28 @@ context = {
     }
 
 insert_text(context)
+
+
+context = {
+    'image_path': 'page_8-image_4.png',
+    'file_name': 'output.pdf',
+    'page_num': 8,
+    'coordinates': (160, 253),
+    'coef': 0.62,
+    'output_path': 'output.pdf',
+    'incremental': True
+}
+
+insert_image(context)
+
+context = {
+    'image_path': 'page_10-image_3.png',
+    'file_name': 'output.pdf',
+    'page_num': 10,
+    'coordinates': (100, 253),
+    'coef': 0.65,
+    'output_path': 'output.pdf',
+    'incremental': True
+}
+
+insert_image(context)

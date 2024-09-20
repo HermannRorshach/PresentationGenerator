@@ -5,6 +5,7 @@ from PIL import Image
 def insert_image(context):
 
     img = Image.open(context['image_path'])
+    # Изменение размеров изображения не меняет их пропорций
     img_width, img_height = img.size
 
 
@@ -49,7 +50,7 @@ context = {
     'file_name': "Первичный анализ ниши_с_картинкой.pdf",
     'page_num': 10,
     'coordinates': (100, 253),
-    'coef': 0.62,
+    'coef': 0.65,
     'output_path': 'Первичный анализ ниши_с_картинкой.pdf',
     'incremental': True
 }
