@@ -1,105 +1,44 @@
 import fitz  # pymupdf
 
 
-def insert_text(context):
+def insert_texts(contexts):
 
-# Открытие существующего PDF-файла
-    pdf_document = fitz.open(context['file_name'])
+    # Открытие существующего PDF-файла
+    doc = fitz.open(contexts[0]['file_name'])
+    incremental = contexts[0]['incremental']
+    output_path = contexts[0]['output_path']
 
-# Выбор страницы, на которой нужно работать
-    page = pdf_document.load_page(context['page_num'])  # Первая страница (индекс 0)
+    for index, context in enumerate(contexts):
+        if not context['incremental'] == incremental or not context['output_path'] == output_path:
+            doc.save(contexts[index - 1]['output_path'], incremental=contexts[index - 1]['incremental'], encryption=0)
+            doc.close()
+            incremental = contexts[index]['incremental']
+            output_path = contexts[index]['output_path']
+            doc = fitz.open(contexts[index]['file_name'])
 
-# Путь к кастомному шрифту
-    font_path = context['font_path']
+        # Выбор страницы, на которой нужно работать
+        page = doc.load_page(context['page_num'])  # Первая страница (индекс 0)
 
-# Вставка кастомного шрифта на страницу
-    fontname = 'CustomFont'
-    page.insert_font(fontfile=font_path, fontname=fontname)
+        # Путь к кастомному шрифту
+        font_path = context['font_path']
 
-# Настройка шрифта и текста
-    text = context['text']
-    text_position = context['coordinates']   # Позиция (x, y) для текста
+        # Вставка кастомного шрифта на страницу
+        fontname = 'CustomFont'
+        page.insert_font(fontfile=font_path, fontname=fontname)
 
-# Добавление текста на страницу с использованием кастомного шрифта
-    page.insert_text(
-        text_position,              # Позиция текста
-        text,                       # Содержимое текста
-        fontsize=context['font_size'],                # Размер шрифта
-        fontname=fontname,          # Имя кастомного шрифта
-        color=context['color']             # Цвет текста (в диапазоне от 0 до 1)
-    )
+        # Настройка шрифта и текста
+        text = context['text']
+        text_position = context['coordinates']   # Позиция (x, y) для текста
+
+        # Добавление текста на страницу с использованием кастомного шрифта
+        page.insert_text(
+            text_position,              # Позиция текста
+            text,                       # Содержимое текста
+            fontsize=context['font_size'],                # Размер шрифта
+            fontname=fontname,          # Имя кастомного шрифта
+            color=context['color']             # Цвет текста (в диапазоне от 0 до 1)
+        )
 
 # Сохранение изменений в новый PDF-файл
-    pdf_document.save(context['output_path'], incremental=context['incremental'], encryption=0)
-    pdf_document.close()
-
-
-context = {
-    'file_name': 'Первичный анализ ниши пустая презентация.pdf',
-    'page_num': 9,
-    'font_size': 33,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
-    'text': '5643',
-    'color': (184 / 255, 1, 0),
-    'coordinates': (390, 360),
-    'output_path': 'output.pdf',
-    'incremental': False
-    }
-
-insert_text(context)
-
-context = {
-    'file_name': 'output.pdf',
-    'page_num': 9,
-    'font_size': 27,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
-    'text': '10746',
-    'color': (0, 0, 0),
-    'coordinates': (420, 520),
-    'output_path': 'output.pdf',
-    'incremental': True
-    }
-
-insert_text(context)
-
-context = {
-    'file_name': 'output.pdf',
-    'page_num': 11,
-    'font_size': 50,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
-    'text': '43940',
-    'color': (184 / 255, 1, 0),
-    'coordinates': (750, 380),
-    'output_path': 'output.pdf',
-    'incremental': True
-    }
-
-insert_text(context)
-
-context = {
-    'file_name': 'output.pdf',
-    'page_num': 11,
-    'font_size': 50,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
-    'text': '248',
-    'color': (184 / 255, 1, 0),
-    'coordinates': (1180, 280),
-    'output_path': 'output.pdf',
-    'incremental': True
-    }
-
-insert_text(context)
-
-context = {
-    'file_name': 'output.pdf',
-    'page_num': 11,
-    'font_size': 50,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
-    'text': '177',
-    'color': (184 / 255, 1, 0),
-    'coordinates': (1140, 680),
-    'output_path': 'output.pdf',
-    'incremental': True
-    }
-
-insert_text(context)
+    doc.save(context['output_path'], incremental=context['incremental'], encryption=0)
+    doc.close()

@@ -16,11 +16,11 @@ image.close()
 
 from PIL import Image
 
-im1 = Image.open('white_lines.png')
+im1 = Image.open('white_lines_big.png')
 im2 = Image.open('output_image.png')
 
-im1.paste(im2, (6, 100))
-im1.save('fon_pillow_paste.png', quality=95)
+im1.paste(im2, (12, 200))
+im1.save('fon_pillow_paste.png')
 
 
 # Создаем объект со шрифтом

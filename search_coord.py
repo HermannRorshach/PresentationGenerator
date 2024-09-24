@@ -1,21 +1,23 @@
 import fitz  # PyMuPDF
 
 # Открываем PDF файл
-pdf_path = "Первичный анализ ниши.pdf"
+pdf_path = "с данными.pdf"
 doc = fitz.open(pdf_path)
 
 # Указываем слово для поиска
-search_word = "5643"
+search_word = "5000"
 
 # Выбираем страницу для поиска (например, 8-я страница, индекс 7)
-page = doc.load_page(9)
+page = doc.load_page(13)
 
 # Находим все вхождения слова на странице
 text_instances = page.search_for(search_word)
 
 # Выводим координаты каждого найденного вхождения
 for instance in text_instances:
-    print(f"Найдено слово '{search_word}' с координатами: {instance}")
+    x = round((instance[2] - instance[0]) / 2 + instance[0])
+    y = round((instance[3] - instance[1]) / 2 + instance[1])
+    print(f"Найдено слово '{search_word}' с приблизительными координатами: {x}, {y}")
 
 # Закрываем документ
 doc.close()
