@@ -5,10 +5,10 @@ pdf_path = "с данными.pdf"
 doc = fitz.open(pdf_path)
 
 # Указываем слово для поиска
-search_word = "5000"
+search_word = "73840₽"
 
 # Выбираем страницу для поиска (например, 8-я страница, индекс 7)
-page = doc.load_page(13)
+page = doc.load_page(14)
 
 # Находим все вхождения слова на странице
 text_instances = page.search_for(search_word)

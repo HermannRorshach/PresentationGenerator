@@ -82,7 +82,106 @@ contexts = [
         'coordinates': (1140, 680),
         'output_path': 'output.pdf',
         'incremental': True
-    }
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '43940₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (445, 297),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '30000₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (120, 360),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '11940₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (120, 417),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '2000₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (120, 480),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '248',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (755, 365),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '177₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (755, 423),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '29900₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (805, 652),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '“БАЗОВЫЙ”',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (1060, 652),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 14,
+        'font_size': 30,
+        'font_path': 'Jost-SemiBold.ttf',
+        'text': '73840₽',
+        'color': (0.94901, 0.41569, 0.35686),
+        'coordinates': (1170, 695),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
 ]
 
 insert_texts(contexts)
@@ -129,7 +228,7 @@ insert_images(contexts)
 context = {
         'file_name': 'output.pdf',
         'page_num': 6,
-        'font_size': 90,
+        'font_size': 92,
         'font_path': 'Code-Pro-LC.ttf',
         'text': 'СТРОИТЕЛЬСТВО ДОМОВ В ПОДМОСКОВЬЕ И ЗАМОСКВОРЕЧЬЕ И ПОДМОСКВОРЕЧЬЕ ЧИЕ ЧИЕ',
         'color': (1, 1, 1),
@@ -144,7 +243,7 @@ add_title(context)
 import os
 
 pdf_file = "output.pdf"
-page_number = 11
+page_number = 15
 acrobat_path = fr"C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
 # Команда для открытия PDF в Adobe Acrobat на нужной странице
 os.system(f'start "" "{acrobat_path}" /A "page={page_number}" "{pdf_file}"')
