@@ -1,5 +1,6 @@
 from insert_text import insert_texts
 from insert_images import insert_images
+from insert_niche_title import add_title
 
 
 
@@ -124,6 +125,21 @@ contexts = [
 
 
 insert_images(contexts)
+
+context = {
+        'file_name': 'output.pdf',
+        'page_num': 6,
+        'font_size': 90,
+        'font_path': 'Code-Pro-LC.ttf',
+        'text': 'СТРОИТЕЛЬСТВО ДОМОВ В ПОДМОСКОВЬЕ И ЗАМОСКВОРЕЧЬЕ И ПОДМОСКВОРЕЧЬЕ ЧИЕ ЧИЕ',
+        'color': (1, 1, 1),
+        'y_coordinate': 420,
+        'margin': 40,
+        'output_path': 'output.pdf',
+        'incremental': True
+    }
+
+add_title(context)
 
 import os
 
