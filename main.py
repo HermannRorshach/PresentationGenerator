@@ -1,7 +1,7 @@
 from insert_text import insert_texts
 from insert_images import insert_images
 from insert_niche_title import add_title
-from create_diagram import create_diagram_page_8
+# from create_diagram import create_diagram_page_8
 
 
 

@@ -3,6 +3,7 @@ import fitz
 from insert_images import insert_images
 from insert_text import insert_texts
 
+
 context_scale_value = {
     'file_name': 'output.pdf',
     'page_num': 7,
@@ -181,29 +182,37 @@ def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, 
     new_image.save(output_image_path, "PNG")
 
 def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
-    flag_1, flag_2 = False, False
-    context_insert_images[0]['repeat_insertion']['repeat_count'] = 3
+    flag_1, flag_1_1, flag_2 = False, False, False
+    interval = context_insert_images[0]['repeat_insertion']['interval']
+    if (not is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context) and not is_text_fitting(value_1, 'Code-Pro-LC.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context) and not is_text_fitting(value_2, 'Code-Pro-LC.ttf', abs(interval - img_2_width), context)):
+        context_insert_images[0]['repeat_insertion']['repeat_count'] = 3
+        print('Уменьшили количество линий')
     if not is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context):
-        input_image_path = 'Line 1.png'
-        output_image_path = 'line_with_gap.png'
-        gap_start = 67  # Начало разрыва (в пикселях)
-        gap_height = 60  # Высота разрыва (в пикселях)
         flag_1 = True
-        add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
+        if not is_text_fitting(value_1, 'Code-Pro-LC.ttf', abs(interval - img_1_width), context):
+            input_image_path = 'Line 1.png'
+            output_image_path = 'line_with_gap.png'
+            gap_start = 67  # Начало разрыва (в пикселях)
+            gap_height = 60  # Высота разрыва (в пикселях)
+            flag_1_1 = True
+            add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
         contexts_for_values_in_side[0]['coordinates'][0] = 376 + img_1_width + 30
         contexts_for_values_in_side[0]['text'] = str(value_1)
         insert_texts([contexts_for_values_in_side[0]])
 
     if not is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context):
-        if flag_1:
-            input_image_path = 'line_with_gap.png'
-        else:
-            input_image_path = 'Line 1.png'
-        output_image_path = 'line_with_gap.png'
-        gap_start = 234  # Начало разрыва (в пикселях)
-        gap_height = 60  # Высота разрыва (в пикселях)
-        add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
         flag_2 = True
+        if not is_text_fitting(value_2, 'Code-Pro-LC.ttf', abs(interval - img_2_width), context):
+            if flag_1_1:
+                input_image_path = 'line_with_gap.png'
+            else:
+                input_image_path = 'Line 1.png'
+            output_image_path = 'line_with_gap.png'
+            gap_start = 234  # Начало разрыва (в пикселях)
+            gap_height = 60  # Высота разрыва (в пикселях)
+
+            add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
+
         contexts_for_values_in_side[1]['coordinates'][0] = 376 + img_2_width + 30
         contexts_for_values_in_side[1]['text'] = str(value_2)
         insert_texts([contexts_for_values_in_side[1]])
@@ -267,8 +276,7 @@ def create_diagram_page_8(context):
     context_values_in_rectangles.append(copy)
 
     if (is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context) and is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context)):
-        insert_images([context_insert_images[0]])
-        insert_images(context_insert_images[-2:])
+        insert_images(context_insert_images)
         add_centered_text(context_values_in_rectangles)
     else:
         flag_1, flag_2 = handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context)
@@ -292,12 +300,17 @@ def create_diagram_page_8(context):
 context = {
     # 'value_1': 300100000,
     # 'value_2': 25000000,
-    # 'value_1': 2500000,
-    # 'value_2': 50010000,
+    # 'value_1': 250000,
+    # 'value_2': 5001000,
     # 'value_1': 5643,
     # 'value_2': 10745,
-    'value_1': 5,
-    'value_2': 1000,
+    # 'value_1': 5,
+    # 'value_2': 1000,
+    # 'value_1': 5000,
+    # 'value_2': 100,
+    'value_1': 10000,
+    'value_2': 55000,
+
     'font_size': 30
     }
 
