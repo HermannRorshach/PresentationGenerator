@@ -1,6 +1,7 @@
 from insert_text import insert_texts
 from insert_images import insert_images
 from insert_niche_title import add_title
+from create_diagram import create_diagram_page_8
 
 
 
@@ -206,24 +207,55 @@ contexts = [
     'output_path': 'output.pdf',
     'incremental': True
     },
-    {
-    'image_path': 'Line 1.png',
+    # {
+    # 'image_path': 'Line 1.png',
+    # 'file_name': 'output.pdf',
+    # 'page_num': 7,
+    # 'coordinates': (370, 283),
+    # 'repeat_insertion': {
+    #     'repeat_count': 5,
+    #     'interval': 186,
+    #     'direction': 'horizontal'
+    #     },
+    # 'coef': 1,
+    # 'output_path': 'output.pdf',
+    # 'incremental': True
+    # },
+    # {
+    # 'image_path': 'output_image_1.png',
+    # 'file_name': 'output.pdf',
+    # 'page_num': 7,
+    # 'coordinates': (376, 350),
+    # 'coef': 1,
+    # 'output_path': 'output.pdf',
+    # 'incremental': True
+    # },
+    # {
+    # 'image_path': 'output_image_2.png',
+    # 'file_name': 'output.pdf',
+    # 'page_num': 7,
+    # 'coordinates': (376, 517),
+    # 'coef': 1,
+    # 'output_path': 'output.pdf',
+    # 'incremental': True
+    # }
+]
+
+context = {
     'file_name': 'output.pdf',
     'page_num': 7,
-    'coordinates': (370, 283),
-    'repeat_insertion': {
-        'repeat_count': 5,
-        'interval': 186,
-        'direction': 'horizontal'
-        },
-    'coef': 1,
     'output_path': 'output.pdf',
-    'incremental': True
-    }
-]
+    'incremental': True,
+    'value_1': '5643',
+    'value_2': '10745'
+}
+
+# create_diagram_page_8(context)
 
 
 insert_images(contexts)
+
+
 
 context = {
         'file_name': 'output.pdf',
@@ -243,7 +275,7 @@ add_title(context)
 import os
 
 pdf_file = "output.pdf"
-page_number = 15
+page_number = 8
 acrobat_path = fr"C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
 # Команда для открытия PDF в Adobe Acrobat на нужной странице
 os.system(f'start "" "{acrobat_path}" /A "page={page_number}" "{pdf_file}"')

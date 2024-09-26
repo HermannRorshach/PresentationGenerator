@@ -3,11 +3,13 @@ from PIL import Image
 
 def insert_images(contexts):
 
-    def insert_repeated_image(page, image, rect, repeat_count=1, interval=0, direction='horizontal'):
+    def insert_repeated_image(page, image, rect, repeat_count=1, interval=0, direction='horizontal_asc'):
     # Вставляем картинку несколько раз с интервалом
         for i in range(repeat_count):
-            if direction == 'horizontal':
+            if direction == 'horizontal_asc':
                 offset_rect = rect + (i * interval, 0, i * interval, 0)
+            elif direction == 'horizontal_desc':
+                offset_rect = rect - (i * interval, 0, i * interval, 0)
             else:
                 offset_rect = rect + (0, i * interval, 0, i * interval)
             page.insert_image(offset_rect, stream=image)

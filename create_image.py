@@ -33,6 +33,7 @@ draw_text.text(
     font=font,
     fill='#ffff')
 im1.show()
+im2.show()
 
 im1.close()
 im2.close()
