@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Загрузка данных для генерации презентации{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="excel">Загрузите Excel-файл:</label>
+    <input type="file" id="excel" name="excel_file" accept=".xlsx,.xls"/>
+
+    <label for="images">Загрузите изображения:</label>
+    <input type="file" id="images" name="images" accept="image/*" multiple/>
+
+    <button type="submit">Отправить</button>
+  </form>
+{% endblock %}
