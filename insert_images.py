@@ -53,25 +53,25 @@ def insert_images(contexts):
     # Закрываем документ
     doc.close()
 
-contexts = [
-    {
-        'image_path': 'page_8-image_4.png',
-        'file_name': "без данных.pdf",
-        'page_num': 8,
-        'coordinates': (160, 253),
-        'coef': 0.62,
-        'output_path': 'Первичный анализ ниши_с_картинкой.pdf',
-        'incremental': False
-    },
-    {
-        'image_path': 'page_10-image_3.png',
-        'file_name': "Первичный анализ ниши_с_картинкой.pdf",
-        'page_num': 10,
-        'coordinates': (100, 253),
-        'coef': 0.65,
-        'output_path': 'Первичный анализ ниши_с_картинкой.pdf',
-        'incremental': True
-    }
-]
+# contexts = [
+#     {
+#         'image_path': 'page_8-image_4.png',
+#         'file_name': "без данных.pdf",
+#         'page_num': 8,
+#         'coordinates': (160, 253),
+#         'coef': 0.62,
+#         'output_path': 'Первичный анализ ниши_с_картинкой.pdf',
+#         'incremental': False
+#     },
+#     {
+#         'image_path': 'page_10-image_3.png',
+#         'file_name': "Первичный анализ ниши_с_картинкой.pdf",
+#         'page_num': 10,
+#         'coordinates': (100, 253),
+#         'coef': 0.65,
+#         'output_path': 'Первичный анализ ниши_с_картинкой.pdf',
+#         'incremental': True
+#     }
+# ]
 
-insert_images(contexts)
+# insert_images(contexts)

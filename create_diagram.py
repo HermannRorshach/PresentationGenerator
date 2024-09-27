@@ -8,7 +8,7 @@ context_scale_value = {
     'file_name': 'output.pdf',
     'page_num': 7,
     'font_size': 30,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
+    'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
     'text': '0',
     'color': (1, 1, 1),
     'y_coordinate': 700,
@@ -21,7 +21,7 @@ context_scale_value = {
 
 context_insert_images = [
     {
-        'image_path': 'Line 1.png',
+        'image_path': 'img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (1114, 283),
@@ -35,7 +35,7 @@ context_insert_images = [
         'incremental': True
     },
     {
-        'image_path': 'output_image_1.png',
+        'image_path': 'img/output_image_1.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (376, 350),
@@ -44,7 +44,7 @@ context_insert_images = [
         'incremental': True
     },
     {
-        'image_path': 'output_image_2.png',
+        'image_path': 'img/output_image_2.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (376, 517),
@@ -59,8 +59,8 @@ contexts_for_values_in_side = [
         'file_name': 'output.pdf',
         'page_num': 7,
         'font_size': 30,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
-        'text': '5643',
+        'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
+        'text': '',
         'color': (1, 1, 1),
         'coordinates': [390, 390],
         'output_path': 'output.pdf',
@@ -70,8 +70,8 @@ contexts_for_values_in_side = [
         'file_name': 'output.pdf',
         'page_num': 7,
         'font_size': 30,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
-        'text': '5643',
+        'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
+        'text': '',
         'color': (1, 1, 1),
         'coordinates': [390, 560],
         'output_path': 'output.pdf',
@@ -84,7 +84,7 @@ context_values_in_rectangles = [
     'file_name': 'output.pdf',
     'page_num': 7,
     'font_size': 30,
-    'font_path': 'Code-Pro-Bold-LC.ttf',
+    'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
     'text': '0',
     'color': (0, 0, 0),
     'y_coordinate': 367,
@@ -192,14 +192,14 @@ def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, 
 def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
     flag_1, flag_1_1, flag_2 = False, False, False
     interval = context_insert_images[0]['repeat_insertion']['interval']
-    if (not is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context) and not is_text_fitting(value_1, 'Code-Pro-LC.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context) and not is_text_fitting(value_2, 'Code-Pro-LC.ttf', abs(interval - img_2_width), context)):
+    if (not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context) and not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context)):
         context_insert_images[0]['repeat_insertion']['repeat_count'] = 3
         print('Уменьшили количество линий')
-    if not is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context):
+    if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context):
         flag_1 = True
-        if not is_text_fitting(value_1, 'Code-Pro-LC.ttf', abs(interval - img_1_width), context):
-            input_image_path = 'Line 1.png'
-            output_image_path = 'line_with_gap.png'
+        if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context):
+            input_image_path = 'img/Line 1.png'
+            output_image_path = 'img/line_with_gap.png'
             gap_start = 67  # Начало разрыва (в пикселях)
             gap_height = 60  # Высота разрыва (в пикселях)
             flag_1_1 = True
@@ -208,14 +208,14 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
         contexts_for_values_in_side[0]['text'] = str(value_1)
         insert_texts([contexts_for_values_in_side[0]])
 
-    if not is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context):
+    if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context):
         flag_2 = True
-        if not is_text_fitting(value_2, 'Code-Pro-LC.ttf', abs(interval - img_2_width), context):
+        if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context):
             if flag_1_1:
-                input_image_path = 'line_with_gap.png'
+                input_image_path = 'img/line_with_gap.png'
             else:
-                input_image_path = 'Line 1.png'
-            output_image_path = 'line_with_gap.png'
+                input_image_path = 'img/Line 1.png'
+            output_image_path = 'img/line_with_gap.png'
             gap_start = 234  # Начало разрыва (в пикселях)
             gap_height = 60  # Высота разрыва (в пикселях)
 
@@ -227,7 +227,7 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
 
     context_lines = [
         {
-            'image_path': 'Line 1.png',
+            'image_path': 'img/Line 1.png',
             'file_name': 'output.pdf',
             'page_num': 7,
             'coordinates': (370, 283),
@@ -236,7 +236,7 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
             'incremental': True
         },
         {
-            'image_path': 'line_with_gap.png',
+            'image_path': 'img/line_with_gap.png',
             'file_name': 'output.pdf',
             'page_num': 7,
             'coordinates': (556, 283),
@@ -264,8 +264,8 @@ def create_diagram_page_8(context):
     color_1 = (255, 255, 255)  # Цвет B8FF00 в формате RGB
     color_2 = (184, 255, 0)
 
-    create_color_rectanges(img_1_width, img_height, color_1, "output_image_1.png")
-    create_color_rectanges(img_2_width, img_height, color_2, "output_image_2.png")
+    create_color_rectanges(img_1_width, img_height, color_1, "img/output_image_1.png")
+    create_color_rectanges(img_2_width, img_height, color_2, "img/output_image_2.png")
 
     context_values_in_rectangles[0]['x_center'] = 370 + img_1_width / 2
     context_values_in_rectangles[0]['text'] = str(value_1)
@@ -275,7 +275,7 @@ def create_diagram_page_8(context):
     copy['y_coordinate'] = 536
     context_values_in_rectangles.append(copy)
 
-    if (is_text_fitting(value_1, 'Code-Pro-LC.ttf', img_1_width, context) and is_text_fitting(value_2, 'Code-Pro-LC.ttf', img_2_width, context)):
+    if (is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context)):
         insert_images(context_insert_images)
         add_centered_text(context_values_in_rectangles)
     else:
@@ -320,7 +320,7 @@ contexts_page_10 = [
         'file_name': 'output.pdf',
         'page_num': 9,
         'font_size': 25,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
         'text': 'ЦЕНА ПРОСМОТРА',
         'color': (1, 1, 1),
         'coordinates': (381, 300),
@@ -331,7 +331,7 @@ contexts_page_10 = [
         'file_name': 'output.pdf',
         'page_num': 9,
         'font_size': 25,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
         'text': 'КОНВЕРСИЯ В КОНТАКТ',
         'color': (1, 1, 1),
         'coordinates': (691, 300),
@@ -342,7 +342,7 @@ contexts_page_10 = [
         'file_name': 'output.pdf',
         'page_num': 9,
         'font_size': 25,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'font_path': 'fonts/CodePro/Code-Pro-Bold.ttf',
         'text': 'ЦЕНА КОНТАКТА',
         'color': (1, 1, 1),
         'coordinates': (1071, 300),
@@ -353,7 +353,7 @@ contexts_page_10 = [
         'file_name': 'output.pdf',
         'page_num': 9,
         'font_size': 25,
-        'font_path': 'Code-Pro-LC.ttf',
+        'font_path': 'fonts/CodePro/Code-Pro.ttf',
         'text': 'Значение поисковой выдачи',
         'color': (1, 1, 1),
         'coordinates': (1071, 300),
@@ -364,7 +364,7 @@ contexts_page_10 = [
         'file_name': 'output.pdf',
         'page_num': 9,
         'font_size': 25,
-        'font_path': 'Code-Pro-LC.ttf',
+        'font_path': 'fonts/CodePro/Code-Pro.ttf',
         'text': 'Значение рекомендаций',
         'color': (1, 1, 1),
         'coordinates': (1071, 300),
@@ -375,7 +375,7 @@ contexts_page_10 = [
 
 context_insert_images_page_10 = [
     {
-        'image_path': 'Line 1.png',
+        'image_path': 'img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': (370, 320),
@@ -384,7 +384,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'Line 1.png',
+        'image_path': 'img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': (680, 320),
@@ -398,7 +398,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'search_view_cost_1.png',
+        'image_path': 'img/search_view_cost_1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': [376, 390],
@@ -407,7 +407,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'recommendation_view_cost_1.png',
+        'image_path': 'img/recommendation_view_cost_1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': [376, 560],
@@ -471,16 +471,16 @@ def create_diagram_page_10(context):
         img_height = 60
         color_1 = (255, 255, 255)
         color_2 = (184, 255, 0)
-        output_path_1 = f"search_view_cost_{index}.png"
-        output_path_2 = f"recommendation_view_cost_{index}.png"
+        output_path_1 = f"img/search_view_cost_{index}.png"
+        output_path_2 = f"img/recommendation_view_cost_{index}.png"
         # Создаём цветные прямоугольники для диаграмм
         create_color_rectanges(img_1_width, img_height, color_1, output_path_1)
         create_color_rectanges(img_2_width, img_height, color_2, output_path_2)
 
     for tpl in (
-        ('search_view_cost_1.png', 'recommendation_view_cost_1.png', 376),
-        ('search_view_cost_2.png', 'recommendation_view_cost_2.png', 686),
-        ('search_view_cost_3.png', 'recommendation_view_cost_3.png', 1066)
+        ('img/search_view_cost_1.png', 'img/recommendation_view_cost_1.png', 376),
+        ('img/search_view_cost_2.png', 'img/recommendation_view_cost_2.png', 686),
+        ('img/search_view_cost_3.png', 'img/recommendation_view_cost_3.png', 1066)
         ):
         first_img = {key: value for key, value in context_insert_images_page_10[2].items()}
         second_img = {key: value for key, value in context_insert_images_page_10[3].items()}
