@@ -1,7 +1,7 @@
 from insert_text import insert_texts
 from insert_images import insert_images
 from insert_niche_title import add_title
-# from create_diagram import create_diagram_page_8
+from create_diagram import create_diagram_page_8, create_diagram_page_10
 
 
 
@@ -12,22 +12,11 @@ contexts = [
         'page_num': 9,
         'font_size': 33,
         'font_path': 'Code-Pro-Bold-LC.ttf',
-        'text': '5643',
+        'text': '',
         'color': (184 / 255, 1, 0),
         'coordinates': (390, 360),
         'output_path': 'output.pdf',
         'incremental': False
-    },
-    {
-        'file_name': 'output.pdf',
-        'page_num': 9,
-        'font_size': 27,
-        'font_path': 'Code-Pro-Bold-LC.ttf',
-        'text': '10746',
-        'color': (0, 0, 0),
-        'coordinates': (420, 520),
-        'output_path': 'output.pdf',
-        'incremental': True
     },
     {
         'file_name': 'output.pdf',
@@ -272,10 +261,39 @@ context = {
 
 add_title(context)
 
+context = {
+    # 'value_1': 300100000,
+    # 'value_2': 25000000,
+    # 'value_1': 250000,
+    # 'value_2': 5001000,
+    # 'value_1': 5643,
+    # 'value_2': 10745,
+    # 'value_1': 5,
+    # 'value_2': 1000,
+    # 'value_1': 5000,
+    # 'value_2': 100,
+    'value_1': 10000,
+    'value_2': 55000,
+    'font_size': 30
+    }
+
+create_diagram_page_8(context)
+
+context_page_10 = {
+    'search_view_cost': '15',
+    'search_contact_conversion_rate': '6',
+    'search_contact_cost': '300',
+    'recommendation_view_cost': '27',
+    'recommendation_contact_conversion_rate': '5',
+    'recommendation_contact_cost': '150'
+}
+
+create_diagram_page_10(context_page_10)
+
 import os
 
 pdf_file = "output.pdf"
-page_number = 8
+page_number = 10
 acrobat_path = fr"C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
 # Команда для открытия PDF в Adobe Acrobat на нужной странице
 os.system(f'start "" "{acrobat_path}" /A "page={page_number}" "{pdf_file}"')

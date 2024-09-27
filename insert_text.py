@@ -1,4 +1,6 @@
 import fitz  # pymupdf
+import os
+
 
 
 def insert_texts(contexts):
@@ -23,7 +25,7 @@ def insert_texts(contexts):
         font_path = context['font_path']
 
         # Вставка кастомного шрифта на страницу
-        fontname = 'CustomFont'
+        fontname = os.path.splitext(os.path.basename(context['font_path']))[0]
         page.insert_font(fontfile=font_path, fontname=fontname)
 
         # Настройка шрифта и текста

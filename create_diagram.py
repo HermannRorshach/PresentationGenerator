@@ -96,6 +96,14 @@ context_values_in_rectangles = [
     }
 ]
 
+def create_color_rectanges(img_width, img_height, color, output_path):
+    # Создание нового изображения
+    image = Image.new("RGB", (img_width, img_height), color)
+
+    # Сохранение изображения в формате PNG
+    image.save(output_path)
+    image.close()
+
 def add_centered_text(contexts):
     # Открываем существующий PDF
     doc = fitz.open(contexts[0]['file_name'])
@@ -256,16 +264,8 @@ def create_diagram_page_8(context):
     color_1 = (255, 255, 255)  # Цвет B8FF00 в формате RGB
     color_2 = (184, 255, 0)
 
-    # Создание нового изображения
-    image_1 = Image.new("RGB", (img_1_width, img_height), color_1)
-    image_2 = Image.new("RGB", (img_2_width, img_height), color_2)
-
-    # Сохранение изображения в формате PNG
-    image_1.save("output_image_1.png")
-    image_1.close()
-
-    image_2.save("output_image_2.png")
-    image_2.close()
+    create_color_rectanges(img_1_width, img_height, color_1, "output_image_1.png")
+    create_color_rectanges(img_2_width, img_height, color_2, "output_image_2.png")
 
     context_values_in_rectangles[0]['x_center'] = 370 + img_1_width / 2
     context_values_in_rectangles[0]['text'] = str(value_1)
@@ -310,21 +310,222 @@ context = {
     # 'value_2': 100,
     'value_1': 10000,
     'value_2': 55000,
-
     'font_size': 30
     }
 
 create_diagram_page_8(context)
 
+contexts_page_10 = [
+    {
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'font_size': 25,
+        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'text': 'ЦЕНА ПРОСМОТРА',
+        'color': (1, 1, 1),
+        'coordinates': (381, 300),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'font_size': 25,
+        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'text': 'КОНВЕРСИЯ В КОНТАКТ',
+        'color': (1, 1, 1),
+        'coordinates': (691, 300),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'font_size': 25,
+        'font_path': 'Code-Pro-Bold-LC.ttf',
+        'text': 'ЦЕНА КОНТАКТА',
+        'color': (1, 1, 1),
+        'coordinates': (1071, 300),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'font_size': 25,
+        'font_path': 'Code-Pro-LC.ttf',
+        'text': 'Значение поисковой выдачи',
+        'color': (1, 1, 1),
+        'coordinates': (1071, 300),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'font_size': 25,
+        'font_path': 'Code-Pro-LC.ttf',
+        'text': 'Значение рекомендаций',
+        'color': (1, 1, 1),
+        'coordinates': (1071, 300),
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+]
 
-# # Размеры изображения
-# img_1_width, img_2_width = create_diagram_page_8(context)
+context_insert_images_page_10 = [
+    {
+        'image_path': 'Line 1.png',
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'coordinates': (370, 320),
+        'coef': 1,
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'image_path': 'Line 1.png',
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'coordinates': (680, 320),
+        'repeat_insertion': {
+            'repeat_count': 2,
+            'interval': 380,
+            'direction': 'horizontal_asc'
+            },
+        'coef': 1,
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'image_path': 'search_view_cost_1.png',
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'coordinates': [376, 390],
+        'coef': 1,
+        'output_path': 'output.pdf',
+        'incremental': True
+    },
+    {
+        'image_path': 'recommendation_view_cost_1.png',
+        'file_name': 'output.pdf',
+        'page_num': 9,
+        'coordinates': [376, 560],
+        'coef': 1,
+        'output_path': 'output.pdf',
+        'incremental': True
+    }
+]
+
+# context_page_10 = {
+#     'search_view_cost': '15',
+#     'search_contact_conversion_rate': '6',
+#     'search_contact_cost': '300',
+#     'recommendation_view_cost': '27',
+#     'recommendation_contact_conversion_rate': '5',
+#     'recommendation_contact_cost': '150'
+# }
+
+def calculate_rectangle_widths(max_width, search_value, recommendation_value):
+    # Находим максимальное значение
+    max_value = max(search_value, recommendation_value)
+
+    # Вычисляем процент меньшего значения
+    if max_value == search_value:
+        smaller_value = recommendation_value
+        smaller_key = 'recommendation'
+        larger_key = 'search'
+    else:
+        smaller_value = search_value
+        smaller_key = 'search'
+        larger_key = 'recommendation'
+
+    # Вычисляем процент от максимального значения
+    smaller_value_percent = (smaller_value / max_value) * 100
+
+    # Вычисляем ширину прямоугольника для меньшего значения
+    smaller_rect_width = (max_width * smaller_value_percent) / 100
+
+    # Возвращаем словарь с ширинами прямоугольников
+    return {
+        larger_key: max_width,           # Ширина для большего значения
+        smaller_key: int(smaller_rect_width)  # Ширина для меньшего значения
+    }
+
+def create_diagram_page_10(context):
+    search_view_cost = context['search_view_cost']
+    search_contact_conversion_rate = context ['search_contact_conversion_rate']
+    search_contact_cost = context['search_contact_cost']
+
+    recommendation_view_cost = context['recommendation_view_cost']
+    recommendation_contact_conversion_rate = context ['recommendation_contact_conversion_rate']
+    recommendation_contact_cost = context['recommendation_contact_cost']
+
+    view_cost = calculate_rectangle_widths(200, int(search_view_cost), int(recommendation_view_cost))
+    conversion_rate = calculate_rectangle_widths(200, int(search_contact_conversion_rate), int(recommendation_contact_conversion_rate))
+    contact_cost = calculate_rectangle_widths(200, int(search_contact_cost), int(recommendation_contact_cost))
+
+    for index, dictionary in enumerate((view_cost, conversion_rate, contact_cost), start=1):
+        img_1_width = dictionary['search']
+        img_2_width = dictionary['recommendation']
+        img_height = 60
+        color_1 = (255, 255, 255)
+        color_2 = (184, 255, 0)
+        output_path_1 = f"search_view_cost_{index}.png"
+        output_path_2 = f"recommendation_view_cost_{index}.png"
+        # Создаём цветные прямоугольники для диаграмм
+        create_color_rectanges(img_1_width, img_height, color_1, output_path_1)
+        create_color_rectanges(img_2_width, img_height, color_2, output_path_2)
+
+    for tpl in (
+        ('search_view_cost_1.png', 'recommendation_view_cost_1.png', 376),
+        ('search_view_cost_2.png', 'recommendation_view_cost_2.png', 686),
+        ('search_view_cost_3.png', 'recommendation_view_cost_3.png', 1066)
+        ):
+        first_img = {key: value for key, value in context_insert_images_page_10[2].items()}
+        second_img = {key: value for key, value in context_insert_images_page_10[3].items()}
+        first_img['image_path'] = tpl[0]
+        first_img['coordinates'] = [tpl[2], context_insert_images_page_10[2]['coordinates'][1]]
+        second_img['image_path'] = tpl[1]
+        second_img['coordinates'] = [tpl[2], context_insert_images_page_10[3]['coordinates'][1]]
+
+        context_insert_images_page_10.extend([first_img, second_img])
+
+    del context_insert_images_page_10[2:4]
+
+    # Вставляем текст со значениями справа от диаграмм
+    for index, tpl in enumerate((
+        (search_view_cost, recommendation_view_cost, view_cost),
+        (search_contact_conversion_rate, recommendation_contact_conversion_rate, conversion_rate),
+        (search_contact_cost, recommendation_contact_cost, contact_cost)
+        )):
+        first_line = {key: value for key, value in contexts_page_10[3].items()}
+        second_line = {key: value for key, value in contexts_page_10[4].items()}
+        first_line['text'] = str(tpl[0])
+        x = context_insert_images_page_10[2 + index * 2]['coordinates'][0] + tpl[2]['search'] + 30
+        y = context_insert_images_page_10[2 + index * 2]['coordinates'][1] + 40
+
+        first_line['coordinates'] = [x, y]
+        second_line['text'] = str(tpl[1])
+        x = context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][0] + tpl[2]['recommendation'] + 30
+        y = context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][1] + 40
+        second_line['coordinates'] = [x, y]
+
+        contexts_page_10.extend([first_line, second_line])
+    del contexts_page_10[3:5]
+
+    insert_images(context_insert_images_page_10)
+    insert_texts(contexts_page_10)
+
+# create_diagram_page_10(context=context_page_10)
+
+
 
 
 import os
 
 pdf_file = "output.pdf"
-page_number = 8
+page_number = 10
 acrobat_path = fr"C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
 # Команда для открытия PDF в Adobe Acrobat на нужной странице
-os.system(f'start "" "{acrobat_path}" /A "page={page_number}" "{pdf_file}"')
+# os.system(f'start "" "{acrobat_path}" /A "page={page_number}" "{pdf_file}"')
