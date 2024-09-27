@@ -313,7 +313,7 @@ context = {
     'font_size': 30
     }
 
-create_diagram_page_8(context)
+# create_diagram_page_8(context)
 
 contexts_page_10 = [
     {
@@ -462,8 +462,8 @@ def create_diagram_page_10(context):
     recommendation_contact_cost = context['recommendation_contact_cost']
 
     view_cost = calculate_rectangle_widths(200, int(search_view_cost), int(recommendation_view_cost))
-    conversion_rate = calculate_rectangle_widths(200, int(search_contact_conversion_rate), int(recommendation_contact_conversion_rate))
-    contact_cost = calculate_rectangle_widths(200, int(search_contact_cost), int(recommendation_contact_cost))
+    conversion_rate = calculate_rectangle_widths(200, int(search_contact_conversion_rate.split('.')[0]), int(recommendation_contact_conversion_rate.split('.')[0]))
+    contact_cost = calculate_rectangle_widths(200, int(search_contact_cost.split('.')[0]), int(recommendation_contact_cost.split('.')[0]))
 
     for index, dictionary in enumerate((view_cost, conversion_rate, contact_cost), start=1):
         img_1_width = dictionary['search']
