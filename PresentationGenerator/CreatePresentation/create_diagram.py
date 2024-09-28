@@ -280,10 +280,8 @@ def create_new_document():
     with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/Без данных.pdf")) as source_pdf:
         new_pdf = fitz.open()  # Создаем новый PDF
         page_8 = source_pdf[7]  # Индексация страниц начинается с 0
-
-        new_pdf.insert_page(-1)  # Вставляем пустую страницу
-        new_pdf.fullcopy_page(source_pdf.load_page(7), -1)
-
+        new_pdf.insert_page(-1)  # Создаем пустую страницу в новом документе
+        new_pdf.insert_page(-1, from_page=page_8)
         new_pdf.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{new_pdf_path}"))
     d = context_scale_value
     d['file_name'] = new_pdf_path
@@ -323,8 +321,8 @@ def replace_page_with_new_document(original_pdf_path, new_pdf_path, page_number)
 
 
 def create_diagram_page_8(context):
-    replace_images_with_squares()
-    new_pdf_path = create_new_document()
+    # replace_images_with_squares()
+    # new_pdf_path = create_new_document()
 
 
     value_1 = context['value_1']
@@ -370,7 +368,7 @@ def create_diagram_page_8(context):
         context_text.append(copy)
         x_center += 186
     add_centered_text(context_text)
-    replace_page_with_new_document(os.path.join(settings.BASE_DIR, f"CreatePresentation/outputepdf"), new_pdf_path, 8)
+    # replace_page_with_new_document(os.path.join(settings.BASE_DIR, f"CreatePresentation/outputepdf"), new_pdf_path, 8)
 
 context = {
     # 'value_1': 300100000,
