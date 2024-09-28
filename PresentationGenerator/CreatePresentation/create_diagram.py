@@ -1,7 +1,9 @@
 from PIL import Image
 import fitz
-from insert_images import insert_images
-from insert_text import insert_texts
+from .insert_images import insert_images
+from .insert_text import insert_texts
+from django.conf import settings
+import os
 
 
 context_scale_value = {
@@ -21,7 +23,7 @@ context_scale_value = {
 
 context_insert_images = [
     {
-        'image_path': 'img/Line 1.png',
+        'image_path': 'CreatePresentation/img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (1114, 283),
@@ -35,7 +37,7 @@ context_insert_images = [
         'incremental': True
     },
     {
-        'image_path': 'img/output_image_1.png',
+        'image_path': 'CreatePresentation/img/output_image_1.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (376, 350),
@@ -44,7 +46,7 @@ context_insert_images = [
         'incremental': True
     },
     {
-        'image_path': 'img/output_image_2.png',
+        'image_path': 'CreatePresentation/img/output_image_2.png',
         'file_name': 'output.pdf',
         'page_num': 7,
         'coordinates': (376, 517),
@@ -101,18 +103,18 @@ def create_color_rectanges(img_width, img_height, color, output_path):
     image = Image.new("RGB", (img_width, img_height), color)
 
     # Сохранение изображения в формате PNG
-    image.save(output_path)
+    image.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{output_path}"))
     image.close()
 
 def add_centered_text(contexts):
     # Открываем существующий PDF
-    doc = fitz.open(contexts[0]['file_name'])
+    doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[0]['file_name']}"))
 
     for context in contexts:
 
         # Загружаем первую страницу для редактирования
         page = doc.load_page(context['page_num'])
-        font_path = context['font_path']
+        font_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['font_path']}")
 
         # Вставка кастомного шрифта на страницу
         fontname = 'CustomFont'
@@ -133,7 +135,7 @@ def add_centered_text(contexts):
         page.insert_textbox(text_rect, context['text'], fontsize=context['font_size'], fontname='CustomFont', fill=context['color'], align=1)
 
     # Сохраняем изменения в новый файл
-    doc.save(context['output_path'], incremental=True, encryption=0)
+    doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['output_path']}"), incremental=True, encryption=0)
     doc.close()
 
 coordinates_numbers_on_scale = (370, 556, 742, 928)
@@ -161,7 +163,7 @@ def calculate_scale_and_widths(value_1, value_2):
     return img_1_width, img_2_width, scale_marks
 
 def is_text_fitting(value, font_path, img_width, context):
-    font = fitz.Font(fontfile=font_path)
+    font = fitz.Font(fontfile=os.path.join(settings.BASE_DIR, f"CreatePresentation/{font_path}"))
     # Вычисляем ширину текста в точках
     text_width_actual = font.text_length(str(value), fontsize=context['font_size'])
 
@@ -172,7 +174,7 @@ def is_text_fitting(value, font_path, img_width, context):
 
 def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height):
     # Открываем исходное изображение
-    image = Image.open(input_image_path).convert("RGBA")
+    image = Image.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{input_image_path}")).convert("RGBA")
 
     # Получаем размеры исходного изображения
     width, height = image.size
@@ -187,7 +189,7 @@ def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, 
     new_image.paste(image.crop((0, gap_start + gap_height, width, height)), (0, gap_start + gap_height))
 
     # Сохраняем новое изображение
-    new_image.save(output_image_path, "PNG")
+    new_image.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{output_image_path}"), "PNG")
 
 def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
     flag_1, flag_1_1, flag_2 = False, False, False
@@ -198,8 +200,8 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
     if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context):
         flag_1 = True
         if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context):
-            input_image_path = 'img/Line 1.png'
-            output_image_path = 'img/line_with_gap.png'
+            input_image_path = 'CreatePresentation/img/Line 1.png'
+            output_image_path = 'CreatePresentation/img/line_with_gap.png'
             gap_start = 67  # Начало разрыва (в пикселях)
             gap_height = 60  # Высота разрыва (в пикселях)
             flag_1_1 = True
@@ -212,10 +214,10 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
         flag_2 = True
         if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context):
             if flag_1_1:
-                input_image_path = 'img/line_with_gap.png'
+                input_image_path = 'CreatePresentation/img/line_with_gap.png'
             else:
-                input_image_path = 'img/Line 1.png'
-            output_image_path = 'img/line_with_gap.png'
+                input_image_path = 'CreatePresentation/img/Line 1.png'
+            output_image_path = 'CreatePresentation/img/line_with_gap.png'
             gap_start = 234  # Начало разрыва (в пикселях)
             gap_height = 60  # Высота разрыва (в пикселях)
 
@@ -227,7 +229,7 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
 
     context_lines = [
         {
-            'image_path': 'img/Line 1.png',
+            'image_path': 'CreatePresentation/img/Line 1.png',
             'file_name': 'output.pdf',
             'page_num': 7,
             'coordinates': (370, 283),
@@ -236,7 +238,7 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
             'incremental': True
         },
         {
-            'image_path': 'img/line_with_gap.png',
+            'image_path': 'CreatePresentation/img/line_with_gap.png',
             'file_name': 'output.pdf',
             'page_num': 7,
             'coordinates': (556, 283),
@@ -251,8 +253,80 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
 
     return flag_1, flag_2
 
+def replace_images_with_squares():
+    image_paths = [
+        'CreatePresentation/img/search_view_cost_1.png',
+        'CreatePresentation/img/recommendation_view_cost_1.png',
+        'CreatePresentation/img/search_view_cost_2.png',
+        'CreatePresentation/img/recommendation_view_cost_2.png',
+        'CreatePresentation/img/search_view_cost_3.png',
+        'CreatePresentation/img/recommendation_view_cost_3.png',
+        'CreatePresentation/img/output_image_1.png',
+        'CreatePresentation/img/output_image_2.png'
+    ]
+    for img_path in image_paths:
+        # Заменяем каждое изображение на прозрачный квадрат 1x1
+        square = Image.new("RGBA", (1, 1), (255, 255, 255, 0))  # Прозрачный квадрат
+        square.save(img_path)  # Сохраняем с тем же именем
+
+from datetime import datetime
+
+def create_new_document():
+    # Создаем имя нового документа по текущей дате и времени
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    new_pdf_path = f"new_document_{timestamp}.pdf"
+
+    # Открываем PDF файл и извлекаем 8-ю страницу
+    with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/Без данных.pdf")) as source_pdf:
+        new_pdf = fitz.open()  # Создаем новый PDF
+        page_8 = source_pdf[7]  # Индексация страниц начинается с 0
+
+        new_pdf.insert_page(-1)  # Вставляем пустую страницу
+        new_pdf.fullcopy_page(source_pdf.load_page(7), -1)
+
+        new_pdf.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{new_pdf_path}"))
+    d = context_scale_value
+    d['file_name'] = new_pdf_path
+    d['page_num'] = 0
+    d['output_path'] = new_pdf_path
+
+    for d in context_insert_images:
+        d['file_name'] = new_pdf_path
+        d['page_num'] = 0
+        d['output_path'] = new_pdf_path
+
+    for d in contexts_for_values_in_side:
+        d['file_name'] = new_pdf_path
+        d['page_num'] = 0
+        d['output_path'] = new_pdf_path
+
+
+    for d in context_values_in_rectangles:
+        d['file_name'] = new_pdf_path
+        d['page_num'] = 0
+        d['output_path'] = new_pdf_path
+
+    return new_pdf_path
+
+def replace_page_with_new_document(original_pdf_path, new_pdf_path, page_number):
+    # Открываем оригинальный PDF и новый PDF
+    with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{original_pdf_path}")) as original_pdf:
+        with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{new_pdf_path}")) as new_pdf:
+            # Удаляем 8-ю страницу (индекс 7)
+            original_pdf.delete_page(page_number - 1)
+            # Вставляем новую страницу на место удаленной
+            original_pdf.insert_pdf(new_pdf, from_page=0, to_page=0, at_page=page_number - 1)
+            # Сохраняем изменения в оригинальном PDF
+            original_pdf.save(settings.BASE_DIR, f"CreatePresentation/{original_pdf_path}")
+
+
+
 
 def create_diagram_page_8(context):
+    replace_images_with_squares()
+    new_pdf_path = create_new_document()
+
+
     value_1 = context['value_1']
     value_2 = context['value_2']
 
@@ -296,6 +370,7 @@ def create_diagram_page_8(context):
         context_text.append(copy)
         x_center += 186
     add_centered_text(context_text)
+    replace_page_with_new_document(os.path.join(settings.BASE_DIR, f"CreatePresentation/outputepdf"), new_pdf_path, 8)
 
 context = {
     # 'value_1': 300100000,
@@ -375,7 +450,7 @@ contexts_page_10 = [
 
 context_insert_images_page_10 = [
     {
-        'image_path': 'img/Line 1.png',
+        'image_path': 'CreatePresentation/img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': (370, 320),
@@ -384,7 +459,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'img/Line 1.png',
+        'image_path': 'CreatePresentation/img/Line 1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': (680, 320),
@@ -398,7 +473,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'img/search_view_cost_1.png',
+        'image_path': 'CreatePresentation/img/search_view_cost_1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': [376, 390],
@@ -407,7 +482,7 @@ context_insert_images_page_10 = [
         'incremental': True
     },
     {
-        'image_path': 'img/recommendation_view_cost_1.png',
+        'image_path': 'CreatePresentation/img/recommendation_view_cost_1.png',
         'file_name': 'output.pdf',
         'page_num': 9,
         'coordinates': [376, 560],
@@ -478,9 +553,9 @@ def create_diagram_page_10(context):
         create_color_rectanges(img_2_width, img_height, color_2, output_path_2)
 
     for tpl in (
-        ('img/search_view_cost_1.png', 'img/recommendation_view_cost_1.png', 376),
-        ('img/search_view_cost_2.png', 'img/recommendation_view_cost_2.png', 686),
-        ('img/search_view_cost_3.png', 'img/recommendation_view_cost_3.png', 1066)
+        ('CreatePresentation/img/search_view_cost_1.png', 'CreatePresentation/img/recommendation_view_cost_1.png', 376),
+        ('CreatePresentation/img/search_view_cost_2.png', 'CreatePresentation/img/recommendation_view_cost_2.png', 686),
+        ('CreatePresentation/img/search_view_cost_3.png', 'CreatePresentation/img/recommendation_view_cost_3.png', 1066)
         ):
         first_img = {key: value for key, value in context_insert_images_page_10[2].items()}
         second_img = {key: value for key, value in context_insert_images_page_10[3].items()}

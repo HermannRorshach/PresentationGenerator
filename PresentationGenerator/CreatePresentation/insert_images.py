@@ -1,5 +1,7 @@
 import fitz  # PyMuPDF
 from PIL import Image
+from django.conf import settings
+import os
 
 def insert_images(contexts):
 
@@ -15,23 +17,23 @@ def insert_images(contexts):
             page.insert_image(offset_rect, stream=image)
 
     # Открываем существующий PDF
-    doc = fitz.open(contexts[0]['file_name'])
+    doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[0]['file_name']}"))
     incremental = contexts[0]['incremental']
-    output_path = contexts[0]['output_path']
+    output_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[0]['output_path']}")
 
     for index, context in enumerate(contexts):
         # Если incremental текущего контекста отличается от предыдущего, сохраняем файл, прежде, чем продолжить
         if not context['incremental'] == incremental or not context['output_path'] == output_path:
-            doc.save(contexts[index - 1]['output_path'], incremental=contexts[index - 1]['incremental'], encryption=0)
+            doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[index - 1]['output_path']}"), incremental=contexts[index - 1]['incremental'], encryption=0)
             doc.close()
             incremental = contexts[index]['incremental']
-            output_path = contexts[index]['output_path']
-            doc = fitz.open(contexts[index]['file_name'])
+            output_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[index]['output_path']}")
+            doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[index]['file_name']}"))
 
-        img = Image.open(context['image_path'])
+        img = Image.open(os.path.join(settings.BASE_DIR, f"{context['image_path']}"))
         img_width, img_height = img.size
         # Загружаем изображение
-        image = open(context['image_path'], "rb").read()
+        image = open(os.path.join(settings.BASE_DIR, f"{context['image_path']}"), "rb").read()
         # Выбираем страницу
         page = doc.load_page(context['page_num'])
         x, y = context['coordinates']

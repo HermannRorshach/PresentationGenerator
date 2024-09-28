@@ -1,4 +1,5 @@
 import fitz  # pymupdf
+from django.conf import settings
 import os
 
 
@@ -6,23 +7,24 @@ import os
 def insert_texts(contexts):
 
     # Открытие существующего PDF-файла
-    doc = fitz.open(contexts[0]['file_name'])
+    doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[0]['file_name']}"))
     incremental = contexts[0]['incremental']
     output_path = contexts[0]['output_path']
 
     for index, context in enumerate(contexts):
+
         if not context['incremental'] == incremental or not context['output_path'] == output_path:
-            doc.save(contexts[index - 1]['output_path'], incremental=contexts[index - 1]['incremental'], encryption=0)
+            doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[index - 1]['output_path']}"), incremental=contexts[index - 1]['incremental'], encryption=0)
             doc.close()
             incremental = contexts[index]['incremental']
             output_path = contexts[index]['output_path']
-            doc = fitz.open(contexts[index]['file_name'])
+            doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[index]['file_name']}"))
 
         # Выбор страницы, на которой нужно работать
         page = doc.load_page(context['page_num'])  # Первая страница (индекс 0)
 
         # Путь к кастомному шрифту
-        font_path = context['font_path']
+        font_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['font_path']}")
 
         # Вставка кастомного шрифта на страницу
         fontname = os.path.splitext(os.path.basename(context['font_path']))[0]
@@ -42,5 +44,5 @@ def insert_texts(contexts):
         )
 
 # Сохранение изменений в новый PDF-файл
-    doc.save(context['output_path'], incremental=context['incremental'], encryption=0)
+    doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['output_path']}"), incremental=context['incremental'], encryption=0)
     doc.close()

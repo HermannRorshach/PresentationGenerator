@@ -1,12 +1,14 @@
 import fitz
+from django.conf import settings
+import os
 
 def add_title(context):
     # Открываем существующий PDF
-    doc = fitz.open(context['file_name'])
+    doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['file_name']}"))
 
     # Загружаем первую страницу для редактирования
     page = doc.load_page(context['page_num'])
-    font_path = context['font_path']
+    font_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['font_path']}")
 
     # Вставка кастомного шрифта на страницу
     fontname = 'CustomFont'
@@ -29,5 +31,5 @@ def add_title(context):
     # current_y += 90
 
     # Сохраняем изменения в новый файл
-    doc.save(context['output_path'], incremental=True, encryption=0)
+    doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['output_path']}"), incremental=True, encryption=0)
     doc.close()
