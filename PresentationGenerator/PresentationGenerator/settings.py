@@ -28,7 +28,11 @@ SECRET_KEY = 'django-insecure-itw7mc%u#%p(!qxz930lrkq7ev6a8wb0+b&(a(w%djtrywyw(&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'www.createpresentation.pythonanywhere.com',
+    'createpresentation.pythonanywhere.com',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -122,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = '/media/'  # URL для доступа к файлам
 MEDIA_ROOT = BASE_DIR / 'media'  # Путь к директории для сохранения файлов
 

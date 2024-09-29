@@ -4,6 +4,8 @@ from .insert_images import insert_images
 from .insert_text import insert_texts
 from django.conf import settings
 import os
+from pprint import pprint
+import copy as xerox
 
 
 context_scale_value = {
@@ -191,7 +193,7 @@ def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, 
     # Сохраняем новое изображение
     new_image.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{output_image_path}"), "PNG")
 
-def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
+def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side):
     flag_1, flag_1_1, flag_2 = False, False, False
     interval = context_insert_images[0]['repeat_insertion']['interval']
     if (not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context) and not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context)):
@@ -206,9 +208,9 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
             gap_height = 60  # Высота разрыва (в пикселях)
             flag_1_1 = True
             add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
-        contexts_for_values_in_side[0]['coordinates'][0] = 376 + img_1_width + 30
-        contexts_for_values_in_side[0]['text'] = str(value_1)
-        insert_texts([contexts_for_values_in_side[0]])
+        copy_contexts_for_values_in_side[0]['coordinates'][0] = 376 + img_1_width + 30
+        copy_contexts_for_values_in_side[0]['text'] = str(value_1)
+        insert_texts([copy_contexts_for_values_in_side[0]])
 
     if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context):
         flag_2 = True
@@ -223,9 +225,9 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context):
 
             add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
 
-        contexts_for_values_in_side[1]['coordinates'][0] = 376 + img_2_width + 30
-        contexts_for_values_in_side[1]['text'] = str(value_2)
-        insert_texts([contexts_for_values_in_side[1]])
+        copy_contexts_for_values_in_side[1]['coordinates'][0] = 376 + img_2_width + 30
+        copy_contexts_for_values_in_side[1]['text'] = str(value_2)
+        insert_texts([copy_contexts_for_values_in_side[1]])
 
     context_lines = [
         {
@@ -269,61 +271,11 @@ def replace_images_with_squares():
         square = Image.new("RGBA", (1, 1), (255, 255, 255, 0))  # Прозрачный квадрат
         square.save(img_path)  # Сохраняем с тем же именем
 
-from datetime import datetime
-
-def create_new_document():
-    # Создаем имя нового документа по текущей дате и времени
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    new_pdf_path = f"new_document_{timestamp}.pdf"
-
-    # Открываем PDF файл и извлекаем 8-ю страницу
-    with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/Без данных.pdf")) as source_pdf:
-        new_pdf = fitz.open()  # Создаем новый PDF
-        page_8 = source_pdf[7]  # Индексация страниц начинается с 0
-        new_pdf.insert_page(-1)  # Создаем пустую страницу в новом документе
-        new_pdf.insert_page(-1, from_page=page_8)
-        new_pdf.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{new_pdf_path}"))
-    d = context_scale_value
-    d['file_name'] = new_pdf_path
-    d['page_num'] = 0
-    d['output_path'] = new_pdf_path
-
-    for d in context_insert_images:
-        d['file_name'] = new_pdf_path
-        d['page_num'] = 0
-        d['output_path'] = new_pdf_path
-
-    for d in contexts_for_values_in_side:
-        d['file_name'] = new_pdf_path
-        d['page_num'] = 0
-        d['output_path'] = new_pdf_path
-
-
-    for d in context_values_in_rectangles:
-        d['file_name'] = new_pdf_path
-        d['page_num'] = 0
-        d['output_path'] = new_pdf_path
-
-    return new_pdf_path
-
-def replace_page_with_new_document(original_pdf_path, new_pdf_path, page_number):
-    # Открываем оригинальный PDF и новый PDF
-    with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{original_pdf_path}")) as original_pdf:
-        with fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{new_pdf_path}")) as new_pdf:
-            # Удаляем 8-ю страницу (индекс 7)
-            original_pdf.delete_page(page_number - 1)
-            # Вставляем новую страницу на место удаленной
-            original_pdf.insert_pdf(new_pdf, from_page=0, to_page=0, at_page=page_number - 1)
-            # Сохраняем изменения в оригинальном PDF
-            original_pdf.save(settings.BASE_DIR, f"CreatePresentation/{original_pdf_path}")
-
-
-
 
 def create_diagram_page_8(context):
-    # replace_images_with_squares()
-    # new_pdf_path = create_new_document()
-
+    # Создаём независимые копии, чтобы изменять именно их
+    copy_contexts_for_values_in_side = xerox.deepcopy(contexts_for_values_in_side)
+    copy_context_values_in_rectangles = xerox.deepcopy(context_values_in_rectangles)
 
     value_1 = context['value_1']
     value_2 = context['value_2']
@@ -339,25 +291,23 @@ def create_diagram_page_8(context):
     create_color_rectanges(img_1_width, img_height, color_1, "img/output_image_1.png")
     create_color_rectanges(img_2_width, img_height, color_2, "img/output_image_2.png")
 
-    context_values_in_rectangles[0]['x_center'] = 370 + img_1_width / 2
-    context_values_in_rectangles[0]['text'] = str(value_1)
-    copy = {key: value for key, value in context_values_in_rectangles[0].items()}
+    copy_context_values_in_rectangles[0]['x_center'] = 370 + img_1_width / 2
+    copy_context_values_in_rectangles[0]['text'] = str(value_1)
+    copy = {key: value for key, value in copy_context_values_in_rectangles[0].items()}
     copy['x_center'] = 370 + img_2_width / 2
     copy['text'] = str(value_2)
     copy['y_coordinate'] = 536
-    context_values_in_rectangles.append(copy)
+    copy_context_values_in_rectangles.append(copy)
 
     if (is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context)):
         insert_images(context_insert_images)
-        add_centered_text(context_values_in_rectangles)
+        add_centered_text(copy_context_values_in_rectangles)
     else:
-        flag_1, flag_2 = handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context)
+        flag_1, flag_2 = handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side)
         if not flag_1:
-            add_centered_text([context_values_in_rectangles[0]])
+            add_centered_text([copy_context_values_in_rectangles[0]])
         if not flag_2:
-            add_centered_text([context_values_in_rectangles[1]])
-
-
+            add_centered_text([copy_context_values_in_rectangles[1]])
 
     context_text = []
     x_center = context_scale_value['x_center']
@@ -490,14 +440,6 @@ context_insert_images_page_10 = [
     }
 ]
 
-# context_page_10 = {
-#     'search_view_cost': '15',
-#     'search_contact_conversion_rate': '6',
-#     'search_contact_cost': '300',
-#     'recommendation_view_cost': '27',
-#     'recommendation_contact_conversion_rate': '5',
-#     'recommendation_contact_cost': '150'
-# }
 
 def calculate_rectangle_widths(max_width, search_value, recommendation_value):
     # Находим максимальное значение
@@ -534,9 +476,13 @@ def create_diagram_page_10(context):
     recommendation_contact_conversion_rate = context ['recommendation_contact_conversion_rate']
     recommendation_contact_cost = context['recommendation_contact_cost']
 
-    view_cost = calculate_rectangle_widths(200, int(search_view_cost), int(recommendation_view_cost))
-    conversion_rate = calculate_rectangle_widths(200, int(search_contact_conversion_rate.split('.')[0]), int(recommendation_contact_conversion_rate.split('.')[0]))
-    contact_cost = calculate_rectangle_widths(200, int(search_contact_cost.split('.')[0]), int(recommendation_contact_cost.split('.')[0]))
+    view_cost = calculate_rectangle_widths(200, float(search_view_cost), float(recommendation_view_cost))
+    conversion_rate = calculate_rectangle_widths(200, float(search_contact_conversion_rate.split('.')[0]), float(recommendation_contact_conversion_rate.split('.')[0]))
+    contact_cost = calculate_rectangle_widths(200, float(search_contact_cost.split('.')[0]), float(recommendation_contact_cost.split('.')[0]))
+
+    # Создаём независимые копии, чтобы изменять именно их
+    copy_contexts_page_10 = xerox.deepcopy(contexts_page_10)
+    copy_context_insert_images_page_10 = xerox.deepcopy(context_insert_images_page_10)
 
     for index, dictionary in enumerate((view_cost, conversion_rate, contact_cost), start=1):
         img_1_width = dictionary['search']
@@ -555,16 +501,16 @@ def create_diagram_page_10(context):
         ('CreatePresentation/img/search_view_cost_2.png', 'CreatePresentation/img/recommendation_view_cost_2.png', 686),
         ('CreatePresentation/img/search_view_cost_3.png', 'CreatePresentation/img/recommendation_view_cost_3.png', 1066)
         ):
-        first_img = {key: value for key, value in context_insert_images_page_10[2].items()}
-        second_img = {key: value for key, value in context_insert_images_page_10[3].items()}
+        first_img = {key: value for key, value in copy_context_insert_images_page_10[2].items()}
+        second_img = {key: value for key, value in copy_context_insert_images_page_10[3].items()}
         first_img['image_path'] = tpl[0]
-        first_img['coordinates'] = [tpl[2], context_insert_images_page_10[2]['coordinates'][1]]
+        first_img['coordinates'] = [tpl[2], copy_context_insert_images_page_10[2]['coordinates'][1]]
         second_img['image_path'] = tpl[1]
-        second_img['coordinates'] = [tpl[2], context_insert_images_page_10[3]['coordinates'][1]]
+        second_img['coordinates'] = [tpl[2], copy_context_insert_images_page_10[3]['coordinates'][1]]
 
-        context_insert_images_page_10.extend([first_img, second_img])
+        copy_context_insert_images_page_10.extend([first_img, second_img])
 
-    del context_insert_images_page_10[2:4]
+    del copy_context_insert_images_page_10[2:4]
 
     # Вставляем текст со значениями справа от диаграмм
     for index, tpl in enumerate((
@@ -572,23 +518,25 @@ def create_diagram_page_10(context):
         (search_contact_conversion_rate, recommendation_contact_conversion_rate, conversion_rate),
         (search_contact_cost, recommendation_contact_cost, contact_cost)
         )):
-        first_line = {key: value for key, value in contexts_page_10[3].items()}
-        second_line = {key: value for key, value in contexts_page_10[4].items()}
+        first_line = {key: value for key, value in copy_contexts_page_10[3].items()}
+        second_line = {key: value for key, value in copy_contexts_page_10[4].items()}
         first_line['text'] = str(tpl[0])
-        x = context_insert_images_page_10[2 + index * 2]['coordinates'][0] + tpl[2]['search'] + 30
-        y = context_insert_images_page_10[2 + index * 2]['coordinates'][1] + 40
+        x = copy_context_insert_images_page_10[2 + index * 2]['coordinates'][0] + tpl[2]['search'] + 30
+        y = copy_context_insert_images_page_10[2 + index * 2]['coordinates'][1] + 40
 
         first_line['coordinates'] = [x, y]
         second_line['text'] = str(tpl[1])
-        x = context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][0] + tpl[2]['recommendation'] + 30
-        y = context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][1] + 40
+        x = copy_context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][0] + tpl[2]['recommendation'] + 30
+        y = copy_context_insert_images_page_10[2 + index * 2 + 1]['coordinates'][1] + 40
         second_line['coordinates'] = [x, y]
 
-        contexts_page_10.extend([first_line, second_line])
-    del contexts_page_10[3:5]
+        copy_contexts_page_10.extend([first_line, second_line])
+    del copy_contexts_page_10[3:5]
 
-    insert_images(context_insert_images_page_10)
-    insert_texts(contexts_page_10)
+    insert_images(copy_context_insert_images_page_10)
+
+
+    insert_texts(copy_contexts_page_10)
 
 # create_diagram_page_10(context=context_page_10)
 

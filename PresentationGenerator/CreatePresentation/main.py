@@ -6,6 +6,8 @@ import pandas as pd
 from django.conf import settings
 import os
 from datetime import datetime
+from datetime import datetime
+import pytz
 
 
 def extract_data(file_path):
@@ -20,10 +22,10 @@ def extract_data(file_path):
         all_data = {
             'views_search': presentation_data.loc["Просмотры в поисковой выдаче"].values[0],
             'views_recommendations': presentation_data.loc["Просмотры в рекомендациях"].values[0],
-            'cost_per_view_search': presentation_data.loc["Цена просмотра в поисковой выдачи"].values[0],
-            'cost_per_view_recommendations': f"{round(float(presentation_data.loc['Цена просмотра в рекомендациях'].values[0]))}",
-            'conversion_rate_search': f"{float(presentation_data.loc['Конверсия в контакт в поисковой выдаче'].values[0]) * 100:.2f}%",
-            'conversion_rate_recommendations': f"{float(presentation_data.loc['Конверсия в контакт в рекомендациях'].values[0]) * 100:.2f}%",
+            'cost_per_view_search': f"{round(float(presentation_data.loc['Цена просмотра в поисковой выдачи'].values[0]), 1)}",
+            'cost_per_view_recommendations': f"{round(float(presentation_data.loc['Цена просмотра в рекомендациях'].values[0]), 1)}",
+            'conversion_rate_search': f"{float(presentation_data.loc['Конверсия в контакт в поисковой выдаче'].values[0]) * 100:.1f}%",
+            'conversion_rate_recommendations': f"{float(presentation_data.loc['Конверсия в контакт в рекомендациях'].values[0]) * 100:.1f}%",
             'cost_per_contact_search': f"{round(float(presentation_data.loc['Цена контакта в поисковой выдаче'].values[0]))}",
             'cost_per_contact_recommendations': f"{round(float(presentation_data.loc['Цена контакта в рекомендациях'].values[0]))}",
             'optimal_ad_budget': f"{round(float(presentation_data.loc['Оптимальный рекламный бюджет'].values[0]))}",
@@ -308,7 +310,11 @@ def main(all_data, first_image, second_image):
 
     create_diagram_page_10(context_page_10)
 
-    filename = f"Презентация_{niche}_{datetime.now().strftime('%d%m%Y_%H%M')}.pdf"
+    moscow_tz = pytz.timezone('Europe/Moscow')
+    moscow_time = datetime.now(moscow_tz)
+
+    filename = f"Презентация_{niche}_{moscow_time.strftime('%d%m%Y_%H%M')}.pdf"
+
     contexts = [
         {
             'file_name': 'output.pdf',

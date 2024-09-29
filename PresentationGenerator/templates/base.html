@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,7 +7,7 @@
     <meta name="keywords" content="foo,bar"/>
     <meta name="description" content="foo"/>
     <title>{% block title %}{% endblock title %}</title>
-    <link rel="stylesheet" type="text/css" href=""> 
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
   </head>
   <body>
         {% block content %}{% endblock content %}

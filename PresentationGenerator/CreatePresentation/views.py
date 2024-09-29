@@ -25,8 +25,6 @@ def remove_garbage(folder_path):
             shutil.rmtree(media_file_path)
 
 
-
-
 def upload_files(request):
     remove_garbage(os.path.join(settings.BASE_DIR, "CreatePresentation"))
 
@@ -39,8 +37,6 @@ def upload_files(request):
         excel_filename = fs.save(excel_file.name, excel_file)  # Сохраненное имя Excel файла
         saved_image_filenames = [fs.save(image.name, image) for image in images]  # Сохраненные имена изображений
         first_image, second_image = saved_image_filenames
-        # Второе изображение
-        print('first_image.name =', first_image, 'second_image =', second_image)
 
         # Дальнейшая обработка файлов
         all_data = extract_data(os.path.join(settings.MEDIA_ROOT, excel_filename))
@@ -67,3 +63,9 @@ def upload_files(request):
 
 
     return render(request, 'CreatePresentation/upload_files.html')
+
+def faq(request):
+    return render(request, 'CreatePresentation/FAQ.html')
+
+def contacts(request):
+    return render(request, 'CreatePresentation/contacts.html')

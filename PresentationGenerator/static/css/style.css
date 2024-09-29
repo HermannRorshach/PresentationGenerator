@@ -1,0 +1,43 @@
+html {
+    background-color: bisque;
+    margin: 50px;
+}
+
+p {
+    margin-bottom: 30px;
+}
+
+h1 {text-align: center;}
+h3 {text-align: center;}
+
+.second_header {margin-bottom: 50px;}
+
+ul {list-style-type: none;}
+a {
+    text-decoration: none;
+    color: #0b0e6b;
+}
+
+.top-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px;
+}
+
+.top-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.top-menu ul li {
+    display: inline;
+    margin-left: 15px;
+}
+
+.top-menu ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}

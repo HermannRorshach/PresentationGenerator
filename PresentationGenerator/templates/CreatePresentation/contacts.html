@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Техподдержка{% endblock %}
+
+{% block content %}
+
+<nav class="top-menu">
+    <ul>
+        <li><a href="{% url 'CreatePresentation:upload_files' %}">Главная</a></li>
+    </ul>
+</nav>
+
+    <h1>Для связи с разработчиком</h1>
+    <h3>при возникновении вопросов, пожеланий, коммерческих предложений, <a href="tg://resolve?domain=realpavelb" target="_blank">пишите в телегу</a>, <a href="https://wa.me/+79629404858" target="_blank">в whatsapp</a>, или <a href="https://vk.com/im?sel=6258387" target="_blank">вконтакте</a></h3>
+
+{% endblock %}

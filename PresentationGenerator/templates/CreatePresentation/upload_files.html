@@ -3,14 +3,26 @@
 {% block title %}Загрузка данных для генерации презентации{% endblock %}
 
 {% block content %}
+<nav class="top-menu">
+  <ul>
+      <li><a href="{% url 'CreatePresentation:faq' %}">FAQ</a></li>
+      <li><a href="{% url 'CreatePresentation:contacts' %}">Техподдержка</a></li>
+  </ul>
+</nav>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <h1>Генератор презентаций</h1>
+    <h3 class="second_header">Здесь вы можете загрузить данные для генерации презентации</h3>
+    <p>
     <label for="excel">Загрузите Excel-файл:</label>
     <input type="file" id="excel" name="excel_file" accept=".xlsx,.xls"/>
-
+    </p>
+    <p>
     <label for="images">Загрузите изображения:</label>
     <input type="file" id="images" name="images" accept="image/*" multiple/>
+    </p>
 
-    <button type="submit">Отправить</button>
+    <p><button type="submit">Отправить</button></p>
   </form>
 {% endblock %}
