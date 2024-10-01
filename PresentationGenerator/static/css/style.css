@@ -1,51 +1,22 @@
 html {
-    background-color: #f5f5dc;
-    margin: 50px;
-    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
 }
 
-.faq-container {
+.container {
     max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    background: white;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-p {
-    margin-bottom: 20px;
-}
-
-h1 {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     text-align: center;
-    color: #333;
-}
-
-h3, h4, h5 {
-    color: #555;
-}
-
-.faq-question {
-    margin-top: 30px;
-}
-
-ul, ol {
-    margin-left: 20px;
-}
-
-.example-image {
-    display: block;
-    max-width: 100%;
-    height: auto;
-    margin: 10px 0;
 }
 
 .top-menu {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 20px;
+    text-align: right;
+    margin-bottom: 20px;
 }
 
 .top-menu ul {
@@ -56,11 +27,168 @@ ul, ol {
 
 .top-menu ul li {
     display: inline;
-    margin-left: 15px;
+    margin-left: 20px;
 }
 
 .top-menu ul li a {
     text-decoration: none;
-    color: #0b0e6b;
+    color: #E5322D;
     font-weight: bold;
+}
+
+.top-menu ul li a:hover {
+    text-decoration: none;
+    color: #BD060A;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 36px;
+    color: #333;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.description {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+input[type="file"]:hover {
+    border-color: #007bff;
+}
+
+.submit-button {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    background-color: #E5322D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+}
+
+.submit-button:hover {
+    background-color: #BD060A;
+    transform: translateY(-2px);
+}
+
+input[type="file"] {
+    display: none; /* Скрываем стандартный input */
+}
+
+.file-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #E5322D;
+    color: white;
+    width: 23%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.file-upload:hover {
+    background-color: #BD060A;
+    transform: translateY(-2px);
+}
+
+.file-name {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.faq-wrapper {
+    max-width: 900px; /* Ширина контейнера */
+    margin: 50px auto; /* Центрирование */
+    padding: 100px; /* Внутренние отступы */
+    background-color: #fff; /* Цвет фона */
+    border-radius: 8px; /* Закругленные углы */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень для эффекта глубины */
+}
+
+.faq-container h1 {
+    text-align: center; /* Центрирование заголовка */
+    color: #333; /* Цвет заголовка */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+.faq-item {
+    margin-bottom: 30px; /* Отступ между элементами FAQ */
+}
+
+.faq-question {
+    color: #007bff; /* Цвет вопроса */
+    font-weight: bold; /* Жирный текст */
+}
+
+.example-image {
+    max-width: 100%; /* Ширина изображения не больше контейнера */
+    height: auto; /* Автоматическая высота */
+    margin: 10px 0; /* Отступы сверху и снизу */
+}
+
+.contacts {margin-bottom: 50px;}
+
+.icons {
+    display: inline-flex;
+    margin-bottom: 50px;
+}
+
+.icons__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 40px;
+    border: solid var(--color-blue); /* Замените $color-blue на реальное значение цвета */
+    border-radius: 40px;
+    margin-right: 50px;
+}
+
+.icons__item:last-child {
+    margin-right: 0;
+}
+
+.icons__item i {
+    font-size: 25px;
+    color: black;
+}
+
+.icon-svg {
+    /* width: 21px; Подгоните размер под другие иконки */
+    height: 25px; /* Подгоните размер под другие иконки */
+    color: black; /* Цвет иконки, если необходимо */
+    display: block; /* Чтобы избежать отступов */
 }

@@ -2,6 +2,7 @@ from .insert_text import insert_texts
 from .insert_images import insert_images
 from .insert_niche_title import add_title
 from .create_diagram import create_diagram_page_8, create_diagram_page_10
+from .add_centered_text import add_centered_text
 import pandas as pd
 from django.conf import settings
 import os
@@ -82,39 +83,6 @@ def main(all_data, first_image, second_image):
             'coordinates': (390, 360),
             'output_path': 'output.pdf',
             'incremental': False
-        },
-        {
-            'file_name': 'output.pdf',
-            'page_num': 11,
-            'font_size': 50,
-            'font_path': 'fonts/CodePro/Code-Pro.ttf',
-            'text': optimal_ad_budget,
-            'color': (184 / 255, 1, 0),
-            'coordinates': (750, 380),
-            'output_path': 'output.pdf',
-            'incremental': True
-        },
-        {
-            'file_name': 'output.pdf',
-            'page_num': 11,
-            'font_size': 50,
-            'font_path': 'fonts/CodePro/Code-Pro.ttf',
-            'text': total_contacts,
-            'color': (184 / 255, 1, 0),
-            'coordinates': (1180, 280),
-            'output_path': 'output.pdf',
-            'incremental': True
-        },
-        {
-            'file_name': 'output.pdf',
-            'page_num': 11,
-            'font_size': 50,
-            'font_path': 'fonts/CodePro/Code-Pro.ttf',
-            'text': average_contact_cost,
-            'color': (184 / 255, 1, 0),
-            'coordinates': (1140, 680),
-            'output_path': 'output.pdf',
-            'incremental': True
         },
         {
             'file_name': 'output.pdf',
@@ -240,6 +208,53 @@ def main(all_data, first_image, second_image):
     ]
 
     insert_texts(contexts)
+
+    contexts = [
+        {
+            'file_name': 'output.pdf',
+            'page_num': 11,
+            'font_size': 50,
+            'font_path': 'fonts/CodePro/Code-Pro.ttf',
+            'text': optimal_ad_budget,
+            'color': (184 / 255, 1, 0),
+            'coordinates': (750, 380),
+            'y_coordinate':350,
+            'x_center': 820,
+            'text_width': 300,
+            'output_path': 'output.pdf',
+            'incremental': True
+        },
+        {
+            'file_name': 'output.pdf',
+            'page_num': 11,
+            'font_size': 50,
+            'font_path': 'fonts/CodePro/Code-Pro.ttf',
+            'text': total_contacts,
+            'color': (184 / 255, 1, 0),
+            'coordinates': (1180, 280),
+            'y_coordinate':250,
+            'x_center': 1230,
+            'text_width': 300,
+            'output_path': 'output.pdf',
+            'incremental': True
+        },
+        {
+            'file_name': 'output.pdf',
+            'page_num': 11,
+            'font_size': 50,
+            'font_path': 'fonts/CodePro/Code-Pro.ttf',
+            'text': average_contact_cost,
+            'color': (184 / 255, 1, 0),
+            'coordinates': (1140, 680),
+            'y_coordinate': 640,
+            'x_center': 1180,
+            'text_width': 300,
+            'output_path': 'output.pdf',
+            'incremental': True
+        },
+    ]
+
+    add_centered_text(contexts)
 
 
     contexts = [

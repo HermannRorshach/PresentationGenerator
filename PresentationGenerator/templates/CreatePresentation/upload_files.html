@@ -3,26 +3,45 @@
 {% block title %}Загрузка данных для генерации презентации{% endblock %}
 
 {% block content %}
-<nav class="top-menu">
-  <ul>
-      <li><a href="{% url 'CreatePresentation:faq' %}">FAQ</a></li>
-      <li><a href="{% url 'CreatePresentation:contacts' %}">Техподдержка</a></li>
-  </ul>
-</nav>
+<div class="container">
+  <nav class="top-menu">
+    <ul>
+      <li><b><a href="{% url 'CreatePresentation:faq' %}">FAQ</a></b></li>
+      <li><b><a href="{% url 'CreatePresentation:contacts' %}">Техподдержка</a></b></li>
+    </ul>
+  </nav>
 
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data" class="upload-form">
     {% csrf_token %}
     <h1>Генератор презентаций</h1>
-    <h3 class="second_header">Здесь вы можете загрузить данные для генерации презентации</h3>
-    <p>
-    <label for="excel">Загрузите Excel-файл:</label>
-    <input type="file" id="excel" name="excel_file" accept=".xlsx,.xls"/>
-    </p>
-    <p>
-    <label for="images">Загрузите изображения:</label>
-    <input type="file" id="images" name="images" accept="image/*" multiple/>
-    </p>
+    <h3 class="description">Здесь вы можете загрузить данные для генерации презентации</h3>
 
-    <p><button type="submit">Отправить</button></p>
+    <div class="form-group">
+      <label for="excel" class="file-upload">Выбрать Excel-файл</label>
+      <input type="file" id="excel" name="excel_file" accept=".xlsx,.xls" required onchange="updateFileName('excel')"/>
+      <span id="excel-file-name" class="file-name"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="images" class="file-upload">Выбрать изображения</label>
+      <input type="file" id="images" name="images" accept="image/*" multiple required/>
+      <div id="images-file-names" class="file-name"></div>
+    </div>
+
+
+    <button type="submit" class="submit-button">Создать презентацию</button>
   </form>
+</div>
+<script>
+ document.getElementById('excel').addEventListener('change', function() {
+    const fileName = this.files.length > 0 ? this.files[0].name : 'Нет файла';
+    document.getElementById('excel-file-name').textContent = fileName;
+});
+
+document.getElementById('images').addEventListener('change', function() {
+    const fileNames = Array.from(this.files).map(file => file.name).join('<br>');
+    document.getElementById('images-file-names').innerHTML = fileNames || 'Нет файлов';
+});
+</script>
+
 {% endblock %}

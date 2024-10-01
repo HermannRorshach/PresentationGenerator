@@ -2,6 +2,7 @@ from PIL import Image, ImageFont
 import fitz
 from .insert_images import insert_images
 from .insert_text import insert_texts
+from .add_centered_text import add_centered_text
 from django.conf import settings
 import os
 from pprint import pprint
@@ -101,44 +102,17 @@ context_values_in_rectangles = [
 ]
 
 def create_color_rectanges(img_width, img_height, color, output_path):
+    # Если ширина равна нулю, то задаем ширину 10px и делаем прямоугольник прозрачным
+    if img_width == 0:
+        img_width = 10
+        color = (0, 0, 0, 0)  # Прозрачный цвет (RGBA)
+
     # Создание нового изображения
-    image = Image.new("RGB", (img_width, img_height), color)
+    image = Image.new("RGBA", (img_width, img_height), color)
 
     # Сохранение изображения в формате PNG
     image.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{output_path}"))
     image.close()
-
-def add_centered_text(contexts):
-    # Открываем существующий PDF
-    doc = fitz.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{contexts[0]['file_name']}"))
-
-    for context in contexts:
-
-        # Загружаем первую страницу для редактирования
-        page = doc.load_page(context['page_num'])
-        font_path = os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['font_path']}")
-
-        # Вставка кастомного шрифта на страницу
-        fontname = 'CustomFont'
-        page.insert_font(fontfile=font_path, fontname=fontname)
-
-        # Параметры страницы и текста
-        current_y = context['y_coordinate']
-        text_x_center = context['x_center']
-        text_width = context['text_width']
-        margin = context['margin']
-
-        # Прямоугольник для вставки текста с выравниванием по заданной координате X
-        left_x = text_x_center - (text_width / 2)
-        right_x = text_x_center + (text_width / 2)
-        text_rect = fitz.Rect(left_x, current_y, right_x, current_y + context['font_size'] * 10)
-
-        # Вставляем текст с кастомным шрифтом
-        page.insert_textbox(text_rect, context['text'], fontsize=context['font_size'], fontname='CustomFont', fill=context['color'], align=1)
-
-    # Сохраняем изменения в новый файл
-    doc.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{context['output_path']}"), incremental=True, encryption=0)
-    doc.close()
 
 coordinates_numbers_on_scale = (370, 556, 742, 928)
 
@@ -297,6 +271,7 @@ def create_diagram_page_8(context):
     value_2 = context['value_2']
 
     img_1_width, img_2_width, scale_marks = calculate_scale_and_widths(value_1, value_2)
+    print(img_1_width, img_2_width)
 
     img_height = 60
 
@@ -476,10 +451,14 @@ def calculate_rectangle_widths(max_width, search_value, recommendation_value):
         larger_key = 'recommendation'
 
     # Вычисляем процент от максимального значения
-    smaller_value_percent = (smaller_value / max_value) * 100
-
-    # Вычисляем ширину прямоугольника для меньшего значения
-    smaller_rect_width = (max_width * smaller_value_percent) / 100
+    if max_value == 0:  # Предотвращение ZeroDivisionError
+        smaller_value_percent = 0
+        smaller_rect_width = 0
+        max_width = 0
+    else:
+        smaller_value_percent = (smaller_value / max_value) * 100
+        # Вычисляем ширину прямоугольника для меньшего значения
+        smaller_rect_width = (max_width * smaller_value_percent) / 100
 
     # Возвращаем словарь с ширинами прямоугольников
     return {
