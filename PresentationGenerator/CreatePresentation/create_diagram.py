@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFont
 import fitz
 from .insert_images import insert_images
 from .insert_text import insert_texts
@@ -165,18 +165,27 @@ def calculate_scale_and_widths(value_1, value_2):
     return img_1_width, img_2_width, scale_marks
 
 def is_text_fitting(value, font_path, img_width, context):
-    font = fitz.Font(fontfile=os.path.join(settings.BASE_DIR, f"CreatePresentation/{font_path}"))
-    # Вычисляем ширину текста в точках
-    text_width_actual = font.text_length(str(value), fontsize=context['font_size'])
+    # Корректное формирование абсолютного пути
+    full_font_path = os.path.join(os.path.dirname(__file__), font_path)
+
+    # Проверка, существует ли файл шрифта
+    if not os.path.exists(full_font_path):
+        raise FileNotFoundError(f"Шрифт не найден по пути: {full_font_path}")
+
+    # Вычисляем ширину текста
+    font = ImageFont.truetype(full_font_path, context['font_size'])
+    bbox = font.getbbox(str(value))
+
+    # Выводим ширину текста в консоль
+    text_width_actual = bbox[2] - bbox[0]
 
     # Проверяем, поместится ли текст в указанный прямоугольник
-    if text_width_actual > img_width:
-        return False
-    return True
+    return text_width_actual + 40 <= img_width
+
 
 def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height):
     # Открываем исходное изображение
-    image = Image.open(os.path.join(settings.BASE_DIR, f"CreatePresentation/{input_image_path}")).convert("RGBA")
+    image = Image.open(os.path.join(settings.BASE_DIR, f"{input_image_path}")).convert("RGBA")
 
     # Получаем размеры исходного изображения
     width, height = image.size
@@ -189,32 +198,32 @@ def add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, 
 
     # Копируем часть изображения после разрыва
     new_image.paste(image.crop((0, gap_start + gap_height, width, height)), (0, gap_start + gap_height))
-
     # Сохраняем новое изображение
-    new_image.save(os.path.join(settings.BASE_DIR, f"CreatePresentation/{output_image_path}"), "PNG")
+    new_image.save(os.path.join(settings.BASE_DIR, f"{output_image_path}"), "PNG")
 
-def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side):
+def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side, copy_context_insert_images):
     flag_1, flag_1_1, flag_2 = False, False, False
-    interval = context_insert_images[0]['repeat_insertion']['interval']
-    if (not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context) and not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context)):
-        context_insert_images[0]['repeat_insertion']['repeat_count'] = 3
+    interval = copy_context_insert_images[0]['repeat_insertion']['interval']
+    if (not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro-Bold.ttf', img_1_width, context) and not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro-Bold.ttf', abs(interval - img_1_width), context)) or (not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro-Bold.ttf', img_2_width, context) and not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro-Bold.ttf', abs(interval - img_2_width), context)):
+        copy_context_insert_images[0]['repeat_insertion']['repeat_count'] = 3
         print('Уменьшили количество линий')
-    if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context):
+    if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro-Bold.ttf', img_1_width, context):
         flag_1 = True
-        if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_1_width), context):
+        if not is_text_fitting(value_1, 'fonts/CodePro/Code-Pro-Bold.ttf', abs(interval - img_1_width), context):
             input_image_path = 'CreatePresentation/img/Line 1.png'
             output_image_path = 'CreatePresentation/img/line_with_gap.png'
             gap_start = 67  # Начало разрыва (в пикселях)
             gap_height = 60  # Высота разрыва (в пикселях)
             flag_1_1 = True
+            print('Есть flag_1_1, который говорит о том, что надо обрезать вторую линию')
             add_transparent_gap_to_line(input_image_path, output_image_path, gap_start, gap_height)
         copy_contexts_for_values_in_side[0]['coordinates'][0] = 376 + img_1_width + 30
         copy_contexts_for_values_in_side[0]['text'] = str(value_1)
         insert_texts([copy_contexts_for_values_in_side[0]])
 
-    if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context):
+    if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro-Bold.ttf', img_2_width, context):
         flag_2 = True
-        if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', abs(interval - img_2_width), context):
+        if not is_text_fitting(value_2, 'fonts/CodePro/Code-Pro-Bold.ttf', abs(interval - img_2_width), context):
             if flag_1_1:
                 input_image_path = 'CreatePresentation/img/line_with_gap.png'
             else:
@@ -250,8 +259,14 @@ def handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, co
         }
         ]
 
-    context_lines.extend(context_insert_images)
+    # print('context_lines до слияния с copy_context_insert_images:')
+    # pprint(context_lines)
+    context_lines.extend(copy_context_insert_images)
+
     insert_images(context_lines)
+
+    # print('context_lines после слияния с copy_context_insert_images:')
+    # pprint(context_lines)
 
     return flag_1, flag_2
 
@@ -276,6 +291,7 @@ def create_diagram_page_8(context):
     # Создаём независимые копии, чтобы изменять именно их
     copy_contexts_for_values_in_side = xerox.deepcopy(contexts_for_values_in_side)
     copy_context_values_in_rectangles = xerox.deepcopy(context_values_in_rectangles)
+    copy_context_insert_images = xerox.deepcopy(context_insert_images)
 
     value_1 = context['value_1']
     value_2 = context['value_2']
@@ -299,14 +315,18 @@ def create_diagram_page_8(context):
     copy['y_coordinate'] = 536
     copy_context_values_in_rectangles.append(copy)
 
-    if (is_text_fitting(value_1, 'fonts/CodePro/Code-Pro.ttf', img_1_width, context) and is_text_fitting(value_2, 'fonts/CodePro/Code-Pro.ttf', img_2_width, context)):
-        insert_images(context_insert_images)
+    if (is_text_fitting(value_1, 'fonts/CodePro/Code-Pro-Bold.ttf', img_1_width, context) and is_text_fitting(value_2, 'fonts/CodePro/Code-Pro-Bold.ttf', img_2_width, context)):
+        print('Вывполнили первую проверку на вместимость в прямоугольники')
+        insert_images(copy_context_insert_images)
         add_centered_text(copy_context_values_in_rectangles)
     else:
-        flag_1, flag_2 = handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side)
+        print('Выполняем блок else после проверки')
+        flag_1, flag_2 = handle_text_overflow(value_1, value_2, img_1_width, img_2_width, context, copy_contexts_for_values_in_side, copy_context_insert_images)
         if not flag_1:
+            print('Нет flag_1')
             add_centered_text([copy_context_values_in_rectangles[0]])
         if not flag_2:
+            print('Нет flag_2')
             add_centered_text([copy_context_values_in_rectangles[1]])
 
     context_text = []

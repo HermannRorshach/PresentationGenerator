@@ -1,21 +1,44 @@
 html {
-    background-color: bisque;
+    background-color: #f5f5dc;
     margin: 50px;
+    font-family: Arial, sans-serif;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 p {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
-h1 {text-align: center;}
-h3 {text-align: center;}
+h1 {
+    text-align: center;
+    color: #333;
+}
 
-.second_header {margin-bottom: 50px;}
+h3, h4, h5 {
+    color: #555;
+}
 
-ul {list-style-type: none;}
-a {
-    text-decoration: none;
-    color: #0b0e6b;
+.faq-question {
+    margin-top: 30px;
+}
+
+ul, ol {
+    margin-left: 20px;
+}
+
+.example-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
 }
 
 .top-menu {
@@ -38,6 +61,6 @@ a {
 
 .top-menu ul li a {
     text-decoration: none;
-    color: black;
+    color: #0b0e6b;
     font-weight: bold;
 }
