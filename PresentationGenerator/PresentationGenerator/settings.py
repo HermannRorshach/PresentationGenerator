@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = (
     'django-insecure-itw7mc%u#%p(!qxz930lrkq7ev6a8wb0+b&(a(w%djtrywyw(&'
-    )
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'www.createpresentation.pythonanywhere.com',
