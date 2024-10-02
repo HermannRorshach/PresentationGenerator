@@ -141,22 +141,39 @@ input[type="file"] {
 .faq-container h1 {
     text-align: center; /* Центрирование заголовка */
     color: #333; /* Цвет заголовка */
-    margin-bottom: 20px; /* Отступ снизу */
+    margin-bottom: 50px; /* Отступ снизу */
 }
 
 .faq-item {
-    margin-bottom: 30px; /* Отступ между элементами FAQ */
+    margin-bottom: 50px; /* Отступ между элементами FAQ */
 }
 
 .faq-question {
-    color: #007bff; /* Цвет вопроса */
+    color: #8B0000; /* Тёмно-красный цвет */
     font-weight: bold; /* Жирный текст */
+    font-size: 24px;
 }
 
-.example-image {
-    max-width: 100%; /* Ширина изображения не больше контейнера */
-    height: auto; /* Автоматическая высота */
-    margin: 10px 0; /* Отступы сверху и снизу */
+.faq-question:hover {
+    color: #da080b; /* Цвет при наведении */
+}
+
+table th:first-child {
+    text-align: left; /* Выровнять по левому краю */
+}
+
+a {
+    color: #8B0000; /* Тёмно-красный цвет для ссылок */
+    text-decoration: none; /* Убрать подчеркивание */
+}
+
+a:visited {
+    color: #8B0000; /* Цвет посещенных ссылок */
+}
+
+ul {
+    list-style-type: none; /* Убрать кругляшки */
+    padding: 0; /* Убрать отступы */
 }
 
 .contacts {margin-bottom: 50px;}
@@ -191,4 +208,13 @@ input[type="file"] {
     height: 25px; /* Подгоните размер под другие иконки */
     color: black; /* Цвет иконки, если необходимо */
     display: block; /* Чтобы избежать отступов */
+}
+
+.alert {
+    background-color: #f8d7da; /* Цвет фона для ошибки */
+    color: #721c24; /* Цвет текста для ошибки */
+    padding: 15px; /* Внутренние отступы */
+    margin-bottom: 20px; /* Отступ снизу */
+    border: 1px solid #f5c6cb; /* Цвет рамки */
+    border-radius: 5px; /* Закругленные углы */
 }

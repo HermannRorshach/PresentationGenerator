@@ -14,7 +14,6 @@ image = Image.new("RGB", (img_width, img_height), color)
 image.save("output_image.png")
 image.close()
 
-from PIL import Image
 
 im1 = Image.open('white_lines_big.png')
 im2 = Image.open('output_image.png')
