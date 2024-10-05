@@ -165,3 +165,8 @@ cython_debug/
 #.idea/
 *.pdf
 *.xlsx
+
+client-api.json
+*.zip
+
+.vscode/
