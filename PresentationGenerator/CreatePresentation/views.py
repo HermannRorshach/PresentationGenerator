@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
 from django.shortcuts import render
 
-from .main import extract_data, main
+from .main import extract_data, main, read_google_sheets
 
 
 def remove_garbage(folder_path):
@@ -36,53 +36,59 @@ def upload_files(request):
     remove_garbage(os.path.join(settings.BASE_DIR, "CreatePresentation"))
 
     if request.method == 'POST':
-        excel_file = request.FILES['excel_file']
         images = request.FILES.getlist('images')
-        # error_message = "Данные невалидны. Пожалуйста, проверьте файл."
-        # return render(request, 'CreatePresentation/upload_files.html', {'error_message': error_message})
 
-        # Сохраняем файлы
+        # Проверяем, был ли загружен Excel-файл
+        excel_file = request.FILES.get('excel_file')
+        if excel_file:
+            # Сохраняем Excel-файл
+            fs = FileSystemStorage()
+            excel_filename = fs.save(excel_file.name, excel_file)
+            data_source = os.path.join(settings.MEDIA_ROOT, excel_filename)
+        else:
+            # Если файл не загружен, читаем данные из Google Sheets
+            data_source = read_google_sheets()
+
+        # Сохраняем изображения
         fs = FileSystemStorage()
-        excel_filename = fs.save(
-            excel_file.name, excel_file
-        )  # Сохраненное имя Excel файла
-        saved_image_filenames = [fs.save(
-            image.name, image
-        ) for image in images]  # Сохраненные имена изображений
+        saved_image_filenames = [fs.save(image.name, image)
+                                 for image in images]
         first_image, second_image = saved_image_filenames
 
-        # Дальнейшая обработка файлов
-        all_data = extract_data(
-            os.path.join(settings.MEDIA_ROOT, excel_filename)
-        )
-        if isinstance(all_data, str):  # Проверяем, если это сообщение об ошибке
-            error_message = f"Данные невалидны. Пожалуйста, проверьте файл.<br>Ошибка: {all_data}"
-            return render(request, 'CreatePresentation/upload_files.html', {'error_message': error_message})
+        # Обрабатываем данные
+        if excel_file:
+            all_data = extract_data(data_source)
         else:
-            pdf_file_path, filename = main(all_data, first_image, second_image)
+            all_data = data_source
 
-            # Удаляем загруженные файлы
+        if isinstance(all_data, str):
+            error_message = (f"Данные невалидны. Пожалуйста, проверьте файл."
+                             f"<br>Ошибка: {all_data}")
+            return render(request, 'CreatePresentation/upload_files.html',
+                          {'error_message': error_message})
+
+        pdf_file_path, filename = main(all_data, first_image, second_image)
+
+        # Удаляем загруженные файлы
+        if excel_file:
             fs.delete(excel_filename)
-            fs.delete(first_image)
-            fs.delete(second_image)
+        fs.delete(first_image)
+        fs.delete(second_image)
 
-            # Создание выходного потока
-            pdf_output_stream = BytesIO()
+        # Создание выходного потока
+        pdf_output_stream = BytesIO()
 
-            # Путь к уже существующему PDF-файлу
-            existing_pdf_path = pdf_file_path
+        # Открытие и копирование содержимого
+        with open(pdf_file_path, 'rb') as existing_pdf_file:
+            pdf_output_stream.write(existing_pdf_file.read())
 
-            # Открытие и копирование содержимого
-            with open(existing_pdf_path, 'rb') as existing_pdf_file:
-                pdf_output_stream.write(existing_pdf_file.read())
-
-                # Переместить указатель потока в начало
-                pdf_output_stream.seek(0)
-                return FileResponse(
-                    pdf_output_stream,
-                    as_attachment=True,
-                    filename=f"{filename}.pdf"
-                )
+            # Перемещаем указатель потока в начало
+            pdf_output_stream.seek(0)
+            return FileResponse(
+                pdf_output_stream,
+                as_attachment=True,
+                filename=f"{filename}.pdf"
+            )
     return render(request, 'CreatePresentation/upload_files.html')
 
 

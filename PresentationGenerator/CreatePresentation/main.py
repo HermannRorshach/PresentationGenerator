@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 
 import fitz
+import gspread
 import pandas as pd
 import pytz
 from django.conf import settings
@@ -11,6 +12,197 @@ from .create_diagram import create_diagram_page_8, create_diagram_page_10
 from .insert_images import insert_images
 from .insert_niche_title import add_title
 from .insert_text import insert_texts
+
+
+def preparing_data(data):
+    required_keys = [
+        "Просмотры в поисковой выдаче",
+        "Просмотры в рекомендациях",
+        "Цена просмотра в поисковой выдаче",
+        "Цена просмотра в рекомендациях",
+        "Конверсия в контакт в поисковой выдаче",
+        "Конверсия в контакт в рекомендациях",
+        "Цена контакта в поисковой выдаче",
+        "Цена контакта в рекомендациях",
+        "Оптимальный рекламный бюджет",
+        "Количество контактов",
+        "Средняя стоимость контакта",
+        "Публикация объявлений",
+        "Продвижение объявлений",
+        "Бюджет на просмотры/объявления",
+        "Бюджет на услуги продвижения",
+        "Бюджет на тариф авито",
+        "Стоимость услуг агентства",
+        "Название тарифа",
+        "Суммарный рекламный бюджет",
+        "Ниша"
+    ]
+
+    for key in required_keys:
+        try:
+            data[key] = data.loc[key].values[0]
+        except KeyError:
+            raise KeyError(f"Ключ '{key}' отсутствует в данных.")
+    return {
+        'views_search': (
+            data.loc[
+                "Просмотры в поисковой выдаче"
+            ].values[0]
+        ),
+        'views_recommendations': (
+            data.loc[
+                "Просмотры в рекомендациях"
+            ].values[0]
+        ),
+        'cost_per_view_search': (
+            str(round(float(
+                data.loc[
+                    'Цена просмотра '
+                    'в поисковой выдаче'
+                ].values[0]), 1))
+        ),
+        'cost_per_view_recommendations': (
+            str(round(float(
+                data.loc[
+                    'Цена просмотра '
+                    'в рекомендациях'
+                ].values[0]), 1))
+        ),
+        'conversion_rate_search': (
+            str(round(float(
+                data.loc[
+                    'Конверсия в контакт '
+                    'в поисковой выдаче'
+                ].values[0]) * 100, 1)) + '%'
+        ),
+
+        'conversion_rate_recommendations': (
+            str(round(float(
+                data.loc[
+                    'Конверсия в контакт '
+                    'в рекомендациях'
+                ].values[0]) * 100, 1)) + '%'
+        ),
+        'cost_per_contact_search': (
+            str(round(float(
+                data.loc[
+                    'Цена контакта '
+                    'в поисковой выдаче'
+                ].values[0]))
+                )
+        ),
+        'cost_per_contact_recommendations': (
+            str(round(float(
+                data.loc[
+                    'Цена контакта '
+                    'в рекомендациях'
+                ].values[0]))
+                )
+        ),
+        'optimal_ad_budget': (
+            str(round(float(
+                data.loc[
+                    'Оптимальный '
+                    'рекламный бюджет'
+                ].values[0]))
+                )
+        ),
+        'total_contacts': (
+            str(round(float(
+                data.loc[
+                    'Количество '
+                    'контактов'
+                ].values[0]))
+                )
+        ),
+        'average_contact_cost': (
+            str(round(float(
+                data.loc[
+                    'Средняя стоимость '
+                    'контакта'
+                ].values[0]))
+                )
+        ),
+        'all_ads_count': (
+            data.loc[
+                "Публикация объявлений"
+            ].values[0]
+        ),
+        'ad_promotion_range': (
+            data.loc[
+                "Продвижение объявлений"
+            ].values[0]
+        ),
+        'budget_views_ads': (
+            str(round(float(
+                data.loc[
+                    'Бюджет на '
+                    'просмотры/объявления'
+                ].values[0]))
+                )
+        ),
+        'budget_promotion_services': (
+            str(round(float(
+                data.loc[
+                    'Бюджет на '
+                    'услуги продвижения'
+                ].values[0].replace(' ', '')))
+                )
+        ),
+        'avito_tariff_budget': (
+            str(round(float(
+                data.loc[
+                    'Бюджет на '
+                    'тариф авито'
+                ].values[0]))
+                )
+        ),
+        'agency_service_cost': (
+            str(round(float(data.loc[
+                'Стоимость услуг агентства'].values[0])))),
+        'tariff_name': data.loc[
+            "Название тарифа"].values[0],
+        'total_ad_budget': (
+            str(round(float(data.loc['Суммарный рекламный бюджет'
+                                     ].values[0])))),
+
+        'niche': data.loc["Ниша"].values[0]
+    }
+
+
+def read_google_sheets():
+    try:
+        # Авторизация с использованием учетных данных
+        gc = gspread.service_account(filename="client-api.json")
+        spreadsheet = gc.open("Первичный анализ ниши 9-13 Для презентации ")
+
+        if "Для разработчика" not in [
+            sheet.title for sheet in spreadsheet.worksheets()
+        ]:
+            raise ValueError("Лист 'Для разработчика' отсутствует в таблице.")
+
+        # Открытие Google таблицы
+        wks = spreadsheet.worksheet("Для разработчика")
+
+        # Получение всех данных из таблицы
+        data = wks.get_all_values()
+
+        # Удаление символов \xa0 из всех значений
+        cleaned_data = [[cell.replace('\xa0', ' ')
+                        for cell in row] for row in data]
+
+        df = pd.DataFrame(cleaned_data, columns=[0, 1]).set_index(0)
+        df.loc[df.index.isin(
+            ['Конверсия в контакт в поисковой выдаче',
+             'Конверсия в контакт в рекомендациях']), 1] = df.loc[
+            df.index.isin(['Конверсия в контакт в поисковой выдаче',
+                           'Конверсия в контакт в рекомендациях']), 1
+        ].replace({'%': '', ',': '.'}, regex=True).astype(float) / 100
+        # Вызов функции preparing_data с переданным DataFrame
+        return preparing_data(df)
+    except Exception as e:
+        # Обработка ошибки и вывод сообщения
+        return str(e)
 
 
 def extract_data(file_path):
@@ -24,164 +216,10 @@ def extract_data(file_path):
             presentation_data = pd.read_excel(
                 xls, sheet_name="Для разработчика", header=None, dtype=str)
 
-            required_keys = [
-                "Просмотры в поисковой выдаче",
-                "Просмотры в рекомендациях",
-                "Цена просмотра в поисковой выдаче",
-                "Цена просмотра в рекомендациях",
-                "Конверсия в контакт в поисковой выдаче",
-                "Конверсия в контакт в рекомендациях",
-                "Цена контакта в поисковой выдаче",
-                "Цена контакта в рекомендациях",
-                "Оптимальный рекламный бюджет",
-                "Количество контактов",
-                "Средняя стоимость контакта",
-                "Публикация объявлений",
-                "Продвижение объявлений",
-                "Бюджет на просмотры/объявления",
-                "Бюджет на услуги продвижения",
-                "Бюджет на тариф авито",
-                "Стоимость услуг агентства",
-                "Название тарифа",
-                "Суммарный рекламный бюджет",
-                "Ниша"
-            ]
-
             # Устанавливаем первый столбец как индекс
             presentation_data.set_index(0, inplace=True)
+            return preparing_data(presentation_data)
 
-            for key in required_keys:
-                try:
-                    presentation_data[key] = presentation_data.loc[key].values[0]
-                except KeyError:
-                    raise KeyError(f"Ключ '{key}' отсутствует в данных.")
-
-            # Присваиваем значения переменным, используя индексы
-            return {
-                'views_search': (
-                    presentation_data.loc[
-                        "Просмотры в поисковой выдаче"
-                    ].values[0]
-                ),
-                'views_recommendations': (
-                    presentation_data.loc[
-                        "Просмотры в рекомендациях"
-                    ].values[0]
-                ),
-                'cost_per_view_search': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Цена просмотра '
-                            'в поисковой выдаче'
-                        ].values[0]), 1))
-                ),
-                'cost_per_view_recommendations': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Цена просмотра '
-                            'в рекомендациях'
-                        ].values[0]), 1))
-                ),
-                'conversion_rate_search': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Конверсия в контакт '
-                            'в поисковой выдаче'
-                        ].values[0]) * 100, 1)) + '%'
-                ),
-                'conversion_rate_recommendations': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Конверсия в контакт '
-                            'в рекомендациях'
-                        ].values[0]) * 100, 1)) + '%'
-                ),
-                'cost_per_contact_search': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Цена контакта '
-                            'в поисковой выдаче'
-                        ].values[0]))
-                        )
-                ),
-                'cost_per_contact_recommendations': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Цена контакта '
-                            'в рекомендациях'
-                        ].values[0]))
-                        )
-                ),
-                'optimal_ad_budget': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Оптимальный '
-                            'рекламный бюджет'
-                        ].values[0]))
-                        )
-                ),
-                'total_contacts': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Количество '
-                            'контактов'
-                        ].values[0]))
-                        )
-                ),
-                'average_contact_cost': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Средняя стоимость '
-                            'контакта'
-                        ].values[0]))
-                        )
-                ),
-                'all_ads_count': (
-                    presentation_data.loc[
-                        "Публикация объявлений"
-                    ].values[0]
-                ),
-                'ad_promotion_range': (
-                    presentation_data.loc[
-                        "Продвижение объявлений"
-                    ].values[0]
-                ),
-                'budget_views_ads': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Бюджет на '
-                            'просмотры/объявления'
-                        ].values[0]))
-                        )
-                ),
-                'budget_promotion_services': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Бюджет на '
-                            'услуги продвижения'
-                        ].values[0]))
-                        )
-                ),
-                'avito_tariff_budget': (
-                    str(round(float(
-                        presentation_data.loc[
-                            'Бюджет на '
-                            'тариф авито'
-                        ].values[0]))
-                        )
-                ),
-                'agency_service_cost': (
-                    str(round(float(presentation_data.loc[
-                        'Стоимость услуг агентства'].values[0])))),
-                'tariff_name': presentation_data.loc[
-                    "Название тарифа"].values[0],
-                'total_ad_budget': (
-                    str(round(float(presentation_data.loc['Суммарный '
-                                                          'рекламный бюджет'
-                                                          ].values[0])))),
-
-                'niche': presentation_data.loc["Ниша"].values[0]
-            }
     except Exception as e:
         # Здесь вы можете обработать ошибку и вернуть сообщение пользователю
         return str(e)

@@ -1,5 +1,7 @@
 import os
 
+from django.conf import settings
+
 
 def insert_texts(doc, contexts):
 
@@ -9,7 +11,8 @@ def insert_texts(doc, contexts):
         page = doc.load_page(context['page_num'])  # Первая страница (индекс 0)
 
         # Путь к кастомному шрифту
-        font_path = f"CreatePresentation/{context['font_path']}"
+        font_path = os.path.join(
+            settings.BASE_DIR, f"CreatePresentation/{context['font_path']}")
 
         # Вставка кастомного шрифта на страницу
         fontname = os.path.splitext(os.path.basename(context['font_path']))[0]
